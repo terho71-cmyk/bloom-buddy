@@ -63,6 +63,16 @@ export interface PilotOpportunity {
   successMetrics: string[];
 }
 
+export interface PitchSlide {
+  title: string;
+  bullets: string[];
+}
+
+export interface PitchSnippet {
+  problemSlide: PitchSlide;
+  solutionSlide: PitchSlide;
+}
+
 export interface BulletinResponse {
   citizenBulletin: string;
   expertNote: string;

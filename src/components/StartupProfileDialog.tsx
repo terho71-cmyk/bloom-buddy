@@ -8,8 +8,13 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Building2, Target, TrendingUp, CheckCircle2, Lightbulb } from "lucide-react";
+import { ExternalLink, Building2, Target, TrendingUp, CheckCircle2, Lightbulb, Presentation } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { BloomApi } from "@/services/bloomApi";
+import { PitchSnippet } from "@/types/bloom";
+import { PitchSnippetDialog } from "./PitchSnippetDialog";
+import { RegionWeekPickerDialog } from "./RegionWeekPickerDialog";
 
 interface StartupProfileDialogProps {
   open: boolean;
@@ -43,10 +48,42 @@ export function StartupProfileDialog({
   week
 }: StartupProfileDialogProps) {
   const { toast } = useToast();
+  const [generatingPitch, setGeneratingPitch] = useState(false);
+  const [pitchSnippet, setPitchSnippet] = useState<PitchSnippet | null>(null);
+  const [pitchDialogOpen, setPitchDialogOpen] = useState(false);
+  const [pickerDialogOpen, setPickerDialogOpen] = useState(false);
 
   if (!startup) return null;
 
   const details = startup.startupDetails;
+
+  const handleGeneratePitch = async () => {
+    // If we have region and week context, generate directly
+    if (region && week) {
+      await generatePitchForContext(region, week);
+    } else {
+      // Open picker dialog to select region/week
+      setPickerDialogOpen(true);
+    }
+  };
+
+  const generatePitchForContext = async (selectedRegion: string, selectedWeek: number) => {
+    setGeneratingPitch(true);
+    try {
+      const summary = await BloomApi.getBloomSummary(selectedRegion, selectedWeek);
+      const pitch = await BloomApi.generatePitch(summary, startup);
+      setPitchSnippet(pitch);
+      setPitchDialogOpen(true);
+    } catch (error) {
+      toast({
+        title: "Failed to generate pitch",
+        description: "Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setGeneratingPitch(false);
+    }
+  };
 
   const copyToClipboard = () => {
     if (!details) return;
@@ -212,13 +249,24 @@ Website: ${startup.url}
               </section>
 
               {/* Footer note */}
-              <div className="pt-4 border-t">
-                <p className="text-xs text-muted-foreground mb-4">
+              <div className="pt-4 border-t space-y-3">
+                <p className="text-xs text-muted-foreground">
                   This is a solution profile for {startup.name}. Contact them directly to discuss pilot opportunities and partnerships.
                 </p>
-                <Button onClick={copyToClipboard} variant="outline" className="w-full">
-                  Copy profile to clipboard
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleGeneratePitch} 
+                    variant="default"
+                    className="flex-1 gap-2"
+                    disabled={generatingPitch}
+                  >
+                    <Presentation className="h-4 w-4" />
+                    {generatingPitch ? "Generating..." : "Generate pitch"}
+                  </Button>
+                  <Button onClick={copyToClipboard} variant="outline" className="flex-1">
+                    Copy profile
+                  </Button>
+                </div>
               </div>
             </>
           ) : (
@@ -230,6 +278,21 @@ Website: ${startup.url}
           )}
         </div>
       </DialogContent>
+
+      <PitchSnippetDialog
+        open={pitchDialogOpen}
+        onOpenChange={setPitchDialogOpen}
+        pitch={pitchSnippet}
+        actorName={startup.name}
+        region={region || ""}
+        week={week || 0}
+      />
+
+      <RegionWeekPickerDialog
+        open={pickerDialogOpen}
+        onOpenChange={setPickerDialogOpen}
+        onSelect={generatePitchForContext}
+      />
     </Dialog>
   );
 }
