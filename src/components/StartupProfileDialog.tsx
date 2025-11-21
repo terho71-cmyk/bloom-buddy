@@ -1,4 +1,4 @@
-import { Actor } from "@/types/bloom";
+import { Actor, ProblemFitScore } from "@/types/bloom";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Building2, Target, TrendingUp, CheckCircle2, Lightbulb, Presentation } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BloomApi } from "@/services/bloomApi";
 import { PitchSnippet } from "@/types/bloom";
 import { PitchSnippetDialog } from "./PitchSnippetDialog";
@@ -52,10 +52,39 @@ export function StartupProfileDialog({
   const [pitchSnippet, setPitchSnippet] = useState<PitchSnippet | null>(null);
   const [pitchDialogOpen, setPitchDialogOpen] = useState(false);
   const [pickerDialogOpen, setPickerDialogOpen] = useState(false);
+  const [fitScore, setFitScore] = useState<ProblemFitScore | null>(null);
+  const [loadingFit, setLoadingFit] = useState(false);
+  const [fitPickerDialogOpen, setFitPickerDialogOpen] = useState(false);
 
   if (!startup) return null;
 
   const details = startup.startupDetails;
+
+  // Auto-compute fit if region and week are provided
+  useEffect(() => {
+    if (region && week && open && startup) {
+      computeFitForContext(region, week);
+    } else {
+      setFitScore(null);
+    }
+  }, [region, week, open, startup?.id]);
+
+  const computeFitForContext = async (selectedRegion: string, selectedWeek: number) => {
+    setLoadingFit(true);
+    try {
+      const summary = await BloomApi.getBloomSummary(selectedRegion, selectedWeek);
+      const fit = BloomApi.computeFitScore(summary, startup);
+      setFitScore(fit);
+    } catch (error) {
+      toast({
+        title: "Failed to compute fit score",
+        description: "Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingFit(false);
+    }
+  };
 
   const handleGeneratePitch = async () => {
     // If we have region and week context, generate directly
@@ -162,6 +191,90 @@ Website: ${startup.url}
               </Badge>
             ))}
           </div>
+
+          {/* Problem Fit Score - shown when region and week are available */}
+          {region && week && fitScore && (
+            <section className="border-2 rounded-lg p-4"
+              style={{
+                borderColor: fitScore.label === "High" ? "rgb(34, 197, 94)" : 
+                            fitScore.label === "Medium" ? "rgb(245, 158, 11)" : 
+                            "rgb(156, 163, 175)"
+              }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <Target className="h-6 w-6" style={{
+                  color: fitScore.label === "High" ? "rgb(34, 197, 94)" : 
+                        fitScore.label === "Medium" ? "rgb(245, 158, 11)" : 
+                        "rgb(156, 163, 175)"
+                }} />
+                <div className="flex-1">
+                  <h3 className="text-lg font-heading font-semibold">Problem Fit Right Now</h3>
+                  <p className="text-sm text-muted-foreground">{region}, Week {week}</p>
+                </div>
+                <div className="text-right">
+                  <Badge 
+                    variant="outline"
+                    className="text-lg px-3 py-1"
+                    style={{
+                      borderColor: fitScore.label === "High" ? "rgb(34, 197, 94)" : 
+                                  fitScore.label === "Medium" ? "rgb(245, 158, 11)" : 
+                                  "rgb(156, 163, 175)",
+                      color: fitScore.label === "High" ? "rgb(34, 197, 94)" : 
+                            fitScore.label === "Medium" ? "rgb(245, 158, 11)" : 
+                            "rgb(156, 163, 175)"
+                    }}
+                  >
+                    {fitScore.score}/100
+                  </Badge>
+                  <p className="text-xs font-semibold mt-1"
+                    style={{
+                      color: fitScore.label === "High" ? "rgb(34, 197, 94)" : 
+                            fitScore.label === "Medium" ? "rgb(245, 158, 11)" : 
+                            "rgb(156, 163, 175)"
+                    }}
+                  >
+                    {fitScore.label} Fit
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3 pl-9">
+                <p className="text-sm">{fitScore.explanation}</p>
+                
+                {fitScore.drivers.length > 0 && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-2">Key Drivers:</p>
+                    <ul className="space-y-1">
+                      {fitScore.drivers.map((driver, idx) => (
+                        <li key={idx} className="text-xs flex items-start gap-2">
+                          <span className="text-accent mt-0.5">•</span>
+                          <span>{driver}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Prompt to select region/week if not available */}
+          {!region && !week && (
+            <section className="border-2 border-dashed rounded-lg p-6 text-center">
+              <Target className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+              <h3 className="text-lg font-heading font-semibold mb-2">Check Problem Fit</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Select a region and week to see how well this startup's solution matches the current bloom situation.
+              </p>
+              <Button 
+                onClick={() => setFitPickerDialogOpen(true)}
+                variant="outline"
+                disabled={loadingFit}
+              >
+                {loadingFit ? "Calculating..." : "Select Region & Week"}
+              </Button>
+            </section>
+          )}
 
           {details ? (
             <>
@@ -292,6 +405,12 @@ Website: ${startup.url}
         open={pickerDialogOpen}
         onOpenChange={setPickerDialogOpen}
         onSelect={generatePitchForContext}
+      />
+
+      <RegionWeekPickerDialog
+        open={fitPickerDialogOpen}
+        onOpenChange={setFitPickerDialogOpen}
+        onSelect={computeFitForContext}
       />
     </Dialog>
   );

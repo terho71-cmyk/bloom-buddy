@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Building2, TrendingUp, Lightbulb, FileText } from "lucide-react";
+import { ExternalLink, Building2, TrendingUp, Lightbulb, FileText, Target } from "lucide-react";
 import { Recommendation, BloomSummary, PilotOpportunity } from "@/types/bloom";
 import { BloomApi } from "@/services/bloomApi";
 import { PilotOpportunityDialog } from "./PilotOpportunityDialog";
@@ -60,8 +60,28 @@ export function ActorRecommendations({ recommendations, summary }: ActorRecommen
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {rec.actors.map(actor => (
-              <Card key={actor.id} className="p-4 hover:shadow-lg transition-shadow">
+            {rec.actors.map(actor => {
+              const fitScore = actor.type === 'startup' ? BloomApi.computeFitScore(summary, actor) : null;
+              
+              return (
+              <Card key={actor.id} className="p-4 hover:shadow-lg transition-shadow relative">
+                {/* Fit Score Badge for startups */}
+                {fitScore && (
+                  <div className="absolute top-3 right-3">
+                    <Badge 
+                      variant={fitScore.label === "High" ? "default" : fitScore.label === "Medium" ? "secondary" : "outline"}
+                      className={
+                        fitScore.label === "High" ? "bg-green-500 hover:bg-green-600" : 
+                        fitScore.label === "Medium" ? "bg-amber-500 hover:bg-amber-600" : 
+                        "bg-muted"
+                      }
+                    >
+                      <Target className="h-3 w-3 mr-1" />
+                      {fitScore.score}
+                    </Badge>
+                  </div>
+                )}
+
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
                     {actor.type === 'startup' ? (
@@ -85,6 +105,22 @@ export function ActorRecommendations({ recommendations, summary }: ActorRecommen
 
                 <h4 className="font-heading font-semibold mb-2">{actor.name}</h4>
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{actor.description}</p>
+                
+                {/* Fit explanation for startups */}
+                {fitScore && (
+                  <div className="mb-3 p-2 bg-muted/30 rounded-md border border-muted">
+                    <p className="text-xs text-muted-foreground">
+                      <strong className={
+                        fitScore.label === "High" ? "text-green-600 dark:text-green-400" : 
+                        fitScore.label === "Medium" ? "text-amber-600 dark:text-amber-400" : 
+                        "text-muted-foreground"
+                      }>
+                        {fitScore.label} fit:
+                      </strong>{" "}
+                      {fitScore.explanation.split(". ")[0]}.
+                    </p>
+                  </div>
+                )}
                 
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <span>🌍 {actor.country}</span>
@@ -125,7 +161,7 @@ export function ActorRecommendations({ recommendations, summary }: ActorRecommen
                   </div>
                 )}
               </Card>
-            ))}
+            )})}
           </div>
         </div>
       ))}

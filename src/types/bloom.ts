@@ -73,6 +73,15 @@ export interface PitchSnippet {
   solutionSlide: PitchSlide;
 }
 
+export type FitLabel = "Low" | "Medium" | "High";
+
+export interface ProblemFitScore {
+  score: number;        // 0–100
+  label: FitLabel;
+  explanation: string;
+  drivers: string[];    // bullet reasons
+}
+
 export interface BulletinResponse {
   citizenBulletin: string;
   expertNote: string;
