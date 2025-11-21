@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Building2, TrendingUp, Lightbulb } from "lucide-react";
+import { ExternalLink, Building2, TrendingUp, Lightbulb, FileText } from "lucide-react";
 import { Recommendation, BloomSummary, PilotOpportunity } from "@/types/bloom";
 import { BloomApi } from "@/services/bloomApi";
 import { PilotOpportunityDialog } from "./PilotOpportunityDialog";
+import { StartupProfileDialog } from "./StartupProfileDialog";
 import { useToast } from "@/hooks/use-toast";
 
 interface ActorRecommendationsProps {
@@ -18,6 +19,8 @@ export function ActorRecommendations({ recommendations, summary }: ActorRecommen
   const [pilotOpportunity, setPilotOpportunity] = useState<PilotOpportunity | null>(null);
   const [selectedActor, setSelectedActor] = useState<{ name: string; id: string } | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [profileActor, setProfileActor] = useState<any>(null);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const handleGeneratePilot = async (actorId: string, actorName: string) => {
@@ -96,16 +99,30 @@ export function ActorRecommendations({ recommendations, summary }: ActorRecommen
                 </div>
 
                 {actor.type === 'startup' && (
-                  <Button
-                    onClick={() => handleGeneratePilot(actor.id, actor.name)}
-                    disabled={generatingPilot === actor.id}
-                    variant="secondary"
-                    size="sm"
-                    className="w-full mt-4 gap-2"
-                  >
-                    <Lightbulb className="h-4 w-4" />
-                    {generatingPilot === actor.id ? 'Generating...' : 'Generate pilot idea'}
-                  </Button>
+                  <div className="flex gap-2 mt-4">
+                    <Button
+                      onClick={() => handleGeneratePilot(actor.id, actor.name)}
+                      disabled={generatingPilot === actor.id}
+                      variant="secondary"
+                      size="sm"
+                      className="flex-1 gap-2"
+                    >
+                      <Lightbulb className="h-4 w-4" />
+                      {generatingPilot === actor.id ? 'Generating...' : 'Generate pilot'}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setProfileActor(actor);
+                        setProfileDialogOpen(true);
+                      }}
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 gap-2"
+                    >
+                      <FileText className="h-4 w-4" />
+                      View profile
+                    </Button>
+                  </div>
                 )}
               </Card>
             ))}
@@ -118,6 +135,14 @@ export function ActorRecommendations({ recommendations, summary }: ActorRecommen
         onOpenChange={setDialogOpen}
         opportunity={pilotOpportunity}
         actorName={selectedActor?.name || ''}
+        region={summary.region}
+        week={summary.week}
+      />
+
+      <StartupProfileDialog
+        open={profileDialogOpen}
+        onOpenChange={setProfileDialogOpen}
+        startup={profileActor}
         region={summary.region}
         week={summary.week}
       />

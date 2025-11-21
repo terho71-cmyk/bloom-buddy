@@ -290,6 +290,10 @@ export class BloomApi {
     return Array.from(new Set(obs.map(o => o.week))).sort((a, b) => b - a);
   }
 
+  static getAllActors(): Actor[] {
+    return this.actors;
+  }
+
   // Helper methods
   private static getMaxSeverity(severities: string[]): any {
     if (severities.includes('high')) return 'high';
