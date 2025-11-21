@@ -159,8 +159,8 @@ const Index = () => {
                 </TabsContent>
 
                 <TabsContent value="solutions">
-                  {recommendations && recommendations.length > 0 ? (
-                    <ActorRecommendations recommendations={recommendations} />
+                  {recommendations && recommendations.length > 0 && summary ? (
+                    <ActorRecommendations recommendations={recommendations} summary={summary} />
                   ) : (
                     <div className="text-center py-12">
                       <p className="text-muted-foreground">No recommendations available for this situation.</p>
