@@ -1,13 +1,52 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Building2, TrendingUp } from "lucide-react";
-import { Recommendation } from "@/types/bloom";
+import { Button } from "@/components/ui/button";
+import { ExternalLink, Building2, TrendingUp, Lightbulb } from "lucide-react";
+import { Recommendation, BloomSummary, PilotOpportunity } from "@/types/bloom";
+import { BloomApi } from "@/services/bloomApi";
+import { PilotOpportunityDialog } from "./PilotOpportunityDialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface ActorRecommendationsProps {
   recommendations: Recommendation[];
+  summary: BloomSummary;
 }
 
-export function ActorRecommendations({ recommendations }: ActorRecommendationsProps) {
+export function ActorRecommendations({ recommendations, summary }: ActorRecommendationsProps) {
+  const [generatingPilot, setGeneratingPilot] = useState<string | null>(null);
+  const [pilotOpportunity, setPilotOpportunity] = useState<PilotOpportunity | null>(null);
+  const [selectedActor, setSelectedActor] = useState<{ name: string; id: string } | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleGeneratePilot = async (actorId: string, actorName: string) => {
+    setGeneratingPilot(actorId);
+    
+    try {
+      const actor = recommendations
+        .flatMap(r => r.actors)
+        .find(a => a.id === actorId);
+      
+      if (!actor) {
+        throw new Error("Actor not found");
+      }
+
+      const opportunity = await BloomApi.generatePilot(summary, actor);
+      setPilotOpportunity(opportunity);
+      setSelectedActor({ name: actorName, id: actorId });
+      setDialogOpen(true);
+    } catch (error) {
+      toast({
+        title: "Failed to generate pilot",
+        description: "Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setGeneratingPilot(null);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {recommendations.map((rec, idx) => (
@@ -55,11 +94,33 @@ export function ActorRecommendations({ recommendations }: ActorRecommendationsPr
                     </Badge>
                   ))}
                 </div>
+
+                {actor.type === 'startup' && (
+                  <Button
+                    onClick={() => handleGeneratePilot(actor.id, actor.name)}
+                    disabled={generatingPilot === actor.id}
+                    variant="secondary"
+                    size="sm"
+                    className="w-full mt-4 gap-2"
+                  >
+                    <Lightbulb className="h-4 w-4" />
+                    {generatingPilot === actor.id ? 'Generating...' : 'Generate pilot idea'}
+                  </Button>
+                )}
               </Card>
             ))}
           </div>
         </div>
       ))}
+
+      <PilotOpportunityDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        opportunity={pilotOpportunity}
+        actorName={selectedActor?.name || ''}
+        region={summary.region}
+        week={summary.week}
+      />
     </div>
   );
 }

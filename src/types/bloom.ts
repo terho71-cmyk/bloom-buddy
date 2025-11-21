@@ -42,6 +42,14 @@ export interface Recommendation {
   actors: Actor[];
 }
 
+export interface PilotOpportunity {
+  pilotTitle: string;
+  objective: string;
+  whyNow: string;
+  keySteps: string[];
+  successMetrics: string[];
+}
+
 export interface BulletinResponse {
   citizenBulletin: string;
   expertNote: string;

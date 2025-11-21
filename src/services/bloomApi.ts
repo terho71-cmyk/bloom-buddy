@@ -1,4 +1,4 @@
-import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation } from "@/types/bloom";
+import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity } from "@/types/bloom";
 
 // Mock API layer - can be replaced with real API calls later
 export class BloomApi {
@@ -141,6 +141,140 @@ export class BloomApi {
     }
 
     return recommendations;
+  }
+
+  static async generatePilot(summary: BloomSummary, actor: Actor): Promise<PilotOpportunity> {
+    const { region, week, overallRiskLevel, hotspots } = summary;
+    const tags = actor.tags.map(t => t.toLowerCase());
+
+    // Determine focus based on tags and situation
+    const hasMonitoring = tags.some(t => ['monitoring', 'sensors', 'early warning'].includes(t));
+    const hasRemediation = tags.some(t => ['remediation', 'nutrient reduction', 'biotech'].includes(t));
+    const hasCommunication = tags.some(t => ['communication', 'citizen science', 'decision support', 'data visualization'].includes(t));
+    
+    const increasingHotspots = hotspots.filter(h => h.trend === 'increasing').length;
+    const highSeverityHotspots = hotspots.filter(h => h.severity === 'high').length;
+
+    let pilotTitle = '';
+    let objective = '';
+    let whyNow = '';
+    const keySteps: string[] = [];
+    const successMetrics: string[] = [];
+
+    // Generate content based on actor type and situation
+    if (hasMonitoring) {
+      pilotTitle = `Real-time Cyanobacteria Monitoring for ${region}`;
+      objective = `Deploy ${actor.name}'s monitoring solution across key areas in ${region} to provide early detection and tracking of cyanobacteria blooms, enabling timely public health responses.`;
+      
+      whyNow = `Week ${week} shows ${overallRiskLevel} risk level in ${region} with ${hotspots.length} active hotspot${hotspots.length > 1 ? 's' : ''}. `;
+      if (increasingHotspots > 0) {
+        whyNow += `${increasingHotspots} area${increasingHotspots > 1 ? 's show' : ' shows'} increasing trends, making early warning capabilities critical. `;
+      }
+      whyNow += `Proactive monitoring can help authorities and citizens stay ahead of bloom developments and reduce health risks.`;
+
+      keySteps.push(
+        `Deploy 5-8 monitoring units in identified hotspot areas: ${hotspots.slice(0, 3).map(h => h.areaName).join(', ')}`,
+        'Integrate real-time data feed with municipality alert systems',
+        'Set up automated alerts for severity threshold crossings',
+        'Run 4-6 week pilot during peak bloom season',
+        'Train local authorities on system usage and interpretation'
+      );
+
+      successMetrics.push(
+        'Detect at least 80% of high-risk events 24-48 hours before visible bloom',
+        'Achieve <2 hour lag time from detection to public notification',
+        'Reduce citizen exposure incidents by measurable percentage',
+        'Gather feedback from at least 50 local stakeholders',
+        'Demonstrate ROI through prevented health costs'
+      );
+    } else if (hasRemediation) {
+      pilotTitle = `Nutrient Reduction Pilot with ${actor.name} in ${region}`;
+      objective = `Test ${actor.name}'s remediation technology in select hotspot areas to reduce nutrient loads and demonstrate measurable bloom intensity reduction over a defined trial period.`;
+      
+      whyNow = `${region} is experiencing ${overallRiskLevel} severity blooms in week ${week}. `;
+      if (highSeverityHotspots > 0) {
+        whyNow += `${highSeverityHotspots} area${highSeverityHotspots > 1 ? 's have' : ' has'} reached high severity, indicating persistent nutrient issues. `;
+      }
+      if (increasingHotspots > 0) {
+        whyNow += `Increasing trends in ${increasingHotspots} location${increasingHotspots > 1 ? 's' : ''} suggest urgent need for active intervention. `;
+      }
+      whyNow += `This is an ideal time to test remediation solutions where the problem is most acute.`;
+
+      keySteps.push(
+        `Select 2-3 hotspot areas for intervention: ${hotspots.slice(0, 2).map(h => h.areaName).join(', ')}`,
+        'Establish baseline measurements (nutrient levels, bloom density)',
+        `Deploy ${actor.name}'s remediation technology for 8-12 weeks`,
+        'Conduct weekly monitoring and sampling',
+        'Compare treated vs control areas',
+        'Document operational costs and maintenance requirements'
+      );
+
+      successMetrics.push(
+        'Achieve 20-40% reduction in bloom severity in treated areas',
+        'Demonstrate measurable decrease in nitrogen/phosphorus levels',
+        'Document cost per unit area treated',
+        'Assess scalability based on pilot results',
+        'Achieve positive feedback from local community (>70% approval)'
+      );
+    } else if (hasCommunication) {
+      pilotTitle = `Citizen Information & Decision Support for ${region} Waters`;
+      objective = `Launch ${actor.name}'s communication platform to provide real-time bloom information and safety guidance to citizens, tourists, and local businesses in ${region}.`;
+      
+      whyNow = `With ${overallRiskLevel} risk levels in week ${week} and ${hotspots.length} affected area${hotspots.length > 1 ? 's' : ''}, clear public communication is essential. `;
+      if (summary.safeAreas.length > 0) {
+        whyNow += `While ${summary.safeAreas.length} area${summary.safeAreas.length > 1 ? 's remain' : ' remains'} safe, citizens need reliable information to make informed decisions about water activities. `;
+      }
+      whyNow += `A user-friendly information system can help maintain water-based recreation while protecting public health.`;
+
+      keySteps.push(
+        'Deploy web and mobile app interface for bloom status',
+        `Integrate current bloom data for ${region} into user-friendly maps`,
+        'Launch public awareness campaign with local media and tourism offices',
+        'Gather user feedback through in-app surveys',
+        'Run pilot for 6-8 weeks covering peak season',
+        'Train local authorities to update content and respond to user queries'
+      );
+
+      successMetrics.push(
+        'Achieve 1,000+ active users during pilot period',
+        'Maintain daily engagement rate >30%',
+        'Reduce water safety incident inquiries to authorities by 40%',
+        'Achieve user satisfaction score >4/5',
+        'Document user testimonials and behavior change',
+        'Demonstrate reduced risk exposure through app usage correlation'
+      );
+    } else {
+      // Generic pilot for other actor types
+      pilotTitle = `Blue Economy Solution Trial: ${actor.name} in ${region}`;
+      objective = `Test ${actor.name}'s innovative solution in response to the current cyanobacteria situation in ${region}, demonstrating practical value and scalability.`;
+      
+      whyNow = `${region} faces ${overallRiskLevel} bloom risk in week ${week}. The current situation with ${hotspots.length} hotspot${hotspots.length > 1 ? 's' : ''} provides a real-world testing ground for innovative blue economy solutions.`;
+
+      keySteps.push(
+        'Define specific pilot scope and target areas',
+        `Deploy solution in ${region} for 6-8 week trial`,
+        'Establish measurable success criteria',
+        'Conduct regular monitoring and data collection',
+        'Engage with local stakeholders and authorities',
+        'Document lessons learned and scale-up potential'
+      );
+
+      successMetrics.push(
+        'Demonstrate measurable impact on target problem',
+        'Achieve positive stakeholder feedback (>70%)',
+        'Document cost-effectiveness of solution',
+        'Identify scaling opportunities',
+        'Generate case study for broader deployment'
+      );
+    }
+
+    return {
+      pilotTitle,
+      objective,
+      whyNow,
+      keySteps,
+      successMetrics
+    };
   }
 
   static getAvailableRegions(): string[] {
