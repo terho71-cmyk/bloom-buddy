@@ -7,7 +7,8 @@ import { ActorRecommendations } from "@/components/ActorRecommendations";
 import { BloomApi } from "@/services/bloomApi";
 import { BloomSummary, BulletinResponse, Recommendation } from "@/types/bloom";
 import { useToast } from "@/hooks/use-toast";
-import { Waves } from "lucide-react";
+import { Waves, Building2 } from "lucide-react";
+import { NavLink } from "@/components/NavLink";
 
 const Index = () => {
   const [regions, setRegions] = useState<string[]>([]);
@@ -98,13 +99,24 @@ const Index = () => {
       {/* Header */}
       <header className="bg-gradient-ocean text-primary-foreground py-8 shadow-lg">
         <div className="container mx-auto px-4">
-          <div className="flex items-center gap-3 mb-2">
-            <Waves className="h-8 w-8" />
-            <h1 className="text-4xl font-heading font-bold">BlueBloom Hub</h1>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <Waves className="h-8 w-8" />
+                <h1 className="text-4xl font-heading font-bold">BlueBloom Hub</h1>
+              </div>
+              <p className="text-lg opacity-90">
+                Cyanobacteria situation & blue-economy solution finder for Apelago
+              </p>
+            </div>
+            <NavLink 
+              to="/startups" 
+              className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
+            >
+              <Building2 className="h-5 w-5" />
+              <span>Startup Marketplace</span>
+            </NavLink>
           </div>
-          <p className="text-lg opacity-90">
-            Cyanobacteria situation & blue-economy solution finder for Apelago
-          </p>
         </div>
       </header>
 

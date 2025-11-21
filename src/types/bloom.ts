@@ -26,6 +26,18 @@ export interface BloomSummary {
   keyMessages: string[];
 }
 
+export type EnvironmentType = "coastal" | "lakes" | "rivers" | "ports" | "farms" | "urban";
+
+export interface StartupDetails {
+  trlLevel?: number; // 1–9
+  targetEnvironments: EnvironmentType[];
+  typicalCustomer: string;
+  deploymentScale: string;
+  priceRange: string; // e.g. "€", "€€", "€€€"
+  keyBenefits: string[];
+  exampleUseCase: string;
+}
+
 export interface Actor {
   id: string;
   name: string;
@@ -34,6 +46,7 @@ export interface Actor {
   tags: string[];
   description: string;
   url: string;
+  startupDetails?: StartupDetails;
 }
 
 export interface Recommendation {

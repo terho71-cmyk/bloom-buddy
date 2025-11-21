@@ -6,7 +6,22 @@
     "country": "Finland",
     "tags": ["monitoring", "sensors", "early warning"],
     "description": "Real-time water quality sensors with AI-powered bloom detection and predictive analytics.",
-    "url": "https://aquasense.example"
+    "url": "https://aquasense.example",
+    "startupDetails": {
+      "trlLevel": 7,
+      "targetEnvironments": ["coastal", "lakes", "ports"],
+      "typicalCustomer": "Coastal municipalities, marinas, beach operators",
+      "deploymentScale": "5-20 sensor units per bay or beach area",
+      "priceRange": "€€",
+      "keyBenefits": [
+        "Real-time cyanobacteria detection with 95% accuracy",
+        "Automated alerts sent directly to authorities and citizens",
+        "AI-powered 24-48 hour bloom forecasting",
+        "Easy installation with minimal maintenance required",
+        "Cloud dashboard for multi-site monitoring"
+      ],
+      "exampleUseCase": "Deploy 8 sensor buoys in popular swimming areas around Turku archipelago. Integrate data feed into municipality's public website and mobile app. Set up automated SMS alerts when toxin levels exceed safety thresholds. Monitor continuously during summer season with weekly maintenance visits."
+    }
   },
   {
     "id": "act_002",
@@ -15,7 +30,23 @@
     "country": "Estonia",
     "tags": ["monitoring", "satellite", "early warning"],
     "description": "Satellite-based cyanobacteria monitoring using hyperspectral imaging and machine learning.",
-    "url": "https://bluevision.example"
+    "url": "https://bluevision.example",
+    "startupDetails": {
+      "trlLevel": 8,
+      "targetEnvironments": ["coastal", "lakes"],
+      "typicalCustomer": "Regional environmental agencies, national monitoring programs",
+      "deploymentScale": "Entire coastal region or multiple lake systems",
+      "priceRange": "€€€",
+      "keyBenefits": [
+        "Wide-area coverage with daily satellite passes",
+        "Historical trend analysis dating back 5+ years",
+        "No infrastructure installation required",
+        "Can monitor remote or hard-to-reach areas",
+        "Integration with ground-truth sensor data",
+        "Automated bloom hotspot identification"
+      ],
+      "exampleUseCase": "Provide daily satellite imagery analysis for the entire Finnish Archipelago Sea. Generate automated weekly reports showing bloom extent, concentration estimates, and trend maps. Combine with 5 ground validation points to calibrate and verify satellite data accuracy."
+    }
   },
   {
     "id": "act_003",
@@ -24,7 +55,22 @@
     "country": "Sweden",
     "tags": ["remediation", "nutrient reduction"],
     "description": "Innovative nutrient-binding materials and biofilm systems for coastal water treatment.",
-    "url": "https://nutrireduce.example"
+    "url": "https://nutrireduce.example",
+    "startupDetails": {
+      "trlLevel": 6,
+      "targetEnvironments": ["coastal", "ports", "urban"],
+      "typicalCustomer": "Municipalities, port authorities, urban developers",
+      "deploymentScale": "Pilot sites of 500-5000 m² treatment area",
+      "priceRange": "€€",
+      "keyBenefits": [
+        "Passive nutrient removal without energy input",
+        "Reduces phosphorus levels by 40-60% in treated zones",
+        "Modular system scales from small bays to large areas",
+        "Works 24/7 with minimal maintenance",
+        "Eco-friendly materials sourced from natural minerals"
+      ],
+      "exampleUseCase": "Install 1000 m² of nutrient-binding biofilm panels in a sheltered bay near a marina with persistent bloom issues. Monitor phosphorus and nitrogen concentrations weekly for 12 weeks. Compare treated bay against nearby control area to demonstrate nutrient reduction effectiveness."
+    }
   },
   {
     "id": "act_004",
@@ -33,7 +79,22 @@
     "country": "Denmark",
     "tags": ["remediation", "biotech"],
     "description": "Biological remediation using specialized bacteria to combat harmful algal blooms.",
-    "url": "https://ecoguard.example"
+    "url": "https://ecoguard.example",
+    "startupDetails": {
+      "trlLevel": 5,
+      "targetEnvironments": ["coastal", "lakes", "farms"],
+      "typicalCustomer": "Environmental agencies, aquaculture operators, lake associations",
+      "deploymentScale": "Small water bodies or targeted hotspot areas (1-10 hectares)",
+      "priceRange": "€€",
+      "keyBenefits": [
+        "Natural biological solution without chemicals",
+        "Targets cyanobacteria specifically while preserving other species",
+        "Can reduce bloom severity by 30-50% in 2-4 weeks",
+        "Safe for humans, fish, and wildlife",
+        "One-time application per bloom season"
+      ],
+      "exampleUseCase": "Apply specialized bacterial consortium to 3 hotspot bays identified in week 28. Monitor cyanobacteria cell counts, chlorophyll-a levels, and toxin concentrations twice weekly. Assess reduction in bloom density and duration compared to previous years' data for the same locations."
+    }
   },
   {
     "id": "act_005",
@@ -42,7 +103,23 @@
     "country": "Finland",
     "tags": ["communication", "decision support", "data visualization"],
     "description": "Public-facing marine environmental data platforms with real-time alerts and forecasts.",
-    "url": "https://wavecomm.example"
+    "url": "https://wavecomm.example",
+    "startupDetails": {
+      "trlLevel": 9,
+      "targetEnvironments": ["coastal", "lakes", "rivers"],
+      "typicalCustomer": "Municipalities, tourism boards, regional authorities",
+      "deploymentScale": "City-wide or regional coverage",
+      "priceRange": "€",
+      "keyBenefits": [
+        "Mobile and web app with user-friendly interface",
+        "Real-time beach status updates and safety ratings",
+        "Push notifications for water quality changes",
+        "Integration with existing municipal data sources",
+        "Multilingual support for tourists",
+        "Analytics dashboard for authorities to track user engagement"
+      ],
+      "exampleUseCase": "Launch WaveComm app for Turku region covering 25 beaches and swimming areas. Integrate with existing water quality sensors and manual sampling data. Run 8-week summer pilot with promotional campaign through tourism office. Target 2000+ app downloads and gather user feedback through in-app surveys."
+    }
   },
   {
     "id": "act_006",
@@ -51,7 +128,23 @@
     "country": "Norway",
     "tags": ["monitoring", "early warning", "decision support"],
     "description": "AI-driven coastal monitoring system integrating multiple data sources for bloom prediction.",
-    "url": "https://coastalguard.example"
+    "url": "https://coastalguard.example",
+    "startupDetails": {
+      "trlLevel": 7,
+      "targetEnvironments": ["coastal", "ports"],
+      "typicalCustomer": "Regional governments, environmental protection agencies",
+      "deploymentScale": "Regional or multi-municipality systems",
+      "priceRange": "€€€",
+      "keyBenefits": [
+        "Integrates satellite, sensor, weather, and historical data",
+        "7-day bloom probability forecasts with 80% accuracy",
+        "Automated risk assessment and alert generation",
+        "Decision support recommendations for authorities",
+        "API for integration with existing systems",
+        "Continuous learning improves predictions over time"
+      ],
+      "exampleUseCase": "Implement CoastalGuard AI across 5 municipalities in the archipelago region. Connect to 30 existing water quality sensors, satellite feeds, and weather services. Train AI model on 10 years of historical data. Provide weekly forecast reports and automated alerts to municipal decision-makers during 12-week pilot."
+    }
   },
   {
     "id": "act_007",
@@ -60,7 +153,23 @@
     "country": "Finland",
     "tags": ["remediation", "biotech", "nutrient reduction"],
     "description": "Sustainable biological solutions for nutrient management in coastal ecosystems.",
-    "url": "https://biomarine.example"
+    "url": "https://biomarine.example",
+    "startupDetails": {
+      "trlLevel": 6,
+      "targetEnvironments": ["coastal", "lakes", "farms"],
+      "typicalCustomer": "Coastal municipalities, agricultural cooperatives, lake management districts",
+      "deploymentScale": "Small to medium water bodies (5-50 hectares)",
+      "priceRange": "€€",
+      "keyBenefits": [
+        "Combines biofilm technology with nutrient-absorbing organisms",
+        "Reduces both nitrogen and phosphorus simultaneously",
+        "Creates habitat for beneficial microorganisms",
+        "Low environmental impact and fully biodegradable",
+        "Can be combined with other remediation methods",
+        "Provides measurable results within 6-8 weeks"
+      ],
+      "exampleUseCase": "Deploy BioMarine Tech's integrated biofilm-and-organism system in 2 bays with recurring high-severity blooms. Establish nutrient monitoring stations at system installation points and control sites. Track reduction in nutrient levels and bloom frequency over a full growing season (16 weeks)."
+    }
   },
   {
     "id": "act_008",
@@ -69,7 +178,23 @@
     "country": "Germany",
     "tags": ["communication", "early warning", "citizen science"],
     "description": "Mobile app and SMS alert system for beach-goers and coastal communities.",
-    "url": "https://aquaalert.example"
+    "url": "https://aquaalert.example",
+    "startupDetails": {
+      "trlLevel": 9,
+      "targetEnvironments": ["coastal", "lakes"],
+      "typicalCustomer": "Beach operators, tourism associations, municipalities",
+      "deploymentScale": "Local beach areas to regional coverage",
+      "priceRange": "€",
+      "keyBenefits": [
+        "Instant SMS and push notification alerts",
+        "No app download required for SMS subscribers",
+        "Geolocation-based alerts for nearby beaches",
+        "Crowd-sourced water condition reports from users",
+        "Simple admin panel for authorities to post updates",
+        "Low cost with flexible subscription tiers"
+      ],
+      "exampleUseCase": "Set up AquaAlert for 15 popular beaches in the region. Promote SMS subscription through on-site signage and tourism websites. Train beach operators to submit condition updates via simple web form. Run 10-week summer pilot targeting 500+ subscribers and measuring alert delivery effectiveness."
+    }
   },
   {
     "id": "act_009",
@@ -78,7 +203,23 @@
     "country": "Netherlands",
     "tags": ["data visualization", "decision support", "monitoring"],
     "description": "Advanced analytics platform for marine environmental data integration and visualization.",
-    "url": "https://bluedata.example"
+    "url": "https://bluedata.example",
+    "startupDetails": {
+      "trlLevel": 8,
+      "targetEnvironments": ["coastal", "lakes", "rivers", "ports"],
+      "typicalCustomer": "Environmental agencies, research institutions, regional authorities",
+      "deploymentScale": "Multi-source data integration across regions",
+      "priceRange": "€€",
+      "keyBenefits": [
+        "Aggregates data from sensors, satellites, labs, and manual sampling",
+        "Interactive dashboards with customizable visualizations",
+        "Automated report generation for regulators and public",
+        "Trend analysis and comparative tools",
+        "API access for third-party integrations",
+        "Secure cloud-based platform with role-based access"
+      ],
+      "exampleUseCase": "Deploy BlueData platform to unify water quality data from 12 different municipalities, 40 sensors, satellite imagery, and lab results. Create public dashboard showing real-time bloom status across the region. Provide municipal staff with analytics tools to identify trends and prioritize interventions."
+    }
   },
   {
     "id": "act_010",
@@ -87,7 +228,23 @@
     "country": "Poland",
     "tags": ["sensors", "monitoring", "IoT"],
     "description": "Low-cost IoT sensor networks for continuous water quality monitoring.",
-    "url": "https://marinesense.example"
+    "url": "https://marinesense.example",
+    "startupDetails": {
+      "trlLevel": 8,
+      "targetEnvironments": ["coastal", "lakes", "rivers"],
+      "typicalCustomer": "Small municipalities, lake associations, citizen groups",
+      "deploymentScale": "Networks of 10-50 sensors",
+      "priceRange": "€",
+      "keyBenefits": [
+        "Affordable sensors with solar power and cellular connectivity",
+        "Easy self-installation by non-experts",
+        "Measures temperature, pH, turbidity, chlorophyll-a",
+        "Cloud data storage with open API",
+        "Community-friendly dashboard for public access",
+        "Subscription model keeps costs predictable"
+      ],
+      "exampleUseCase": "Install 20 MarineSense sensors across swimming areas in lakes and bays. Engage local community groups to help with installation and monitoring. Provide open data access via public dashboard. Run 12-week pilot to demonstrate value for budget-conscious municipalities and community organizations."
+    }
   },
   {
     "id": "act_011",
@@ -141,7 +298,23 @@
     "country": "Lithuania",
     "tags": ["monitoring", "sensors", "data visualization"],
     "description": "Autonomous drones and buoys for phytoplankton and algae bloom monitoring.",
-    "url": "https://phytomonitor.example"
+    "url": "https://phytomonitor.example",
+    "startupDetails": {
+      "trlLevel": 7,
+      "targetEnvironments": ["coastal", "lakes", "ports"],
+      "typicalCustomer": "Research institutions, environmental agencies, ports",
+      "deploymentScale": "Autonomous monitoring of 10-100 km² areas",
+      "priceRange": "€€€",
+      "keyBenefits": [
+        "Autonomous drones and buoys cover large areas efficiently",
+        "High-resolution imaging of phytoplankton communities",
+        "Real-time data transmission and cloud processing",
+        "Can operate in rough conditions and remote locations",
+        "Detailed species identification using AI image analysis",
+        "Flexible deployment for targeted or wide-area surveys"
+      ],
+      "exampleUseCase": "Deploy 3 autonomous drones to survey 50 km² of archipelago waters twice weekly during bloom season. Combine with 5 stationary buoys in hotspot areas for continuous monitoring. Generate automated species reports and bloom density maps for environmental authorities."
+    }
   },
   {
     "id": "act_017",
@@ -150,7 +323,23 @@
     "country": "Latvia",
     "tags": ["remediation", "nutrient reduction", "community"],
     "description": "Community-driven coastal cleanup and nutrient management programs with tech support.",
-    "url": "https://clearcoast.example"
+    "url": "https://clearcoast.example",
+    "startupDetails": {
+      "trlLevel": 6,
+      "targetEnvironments": ["coastal", "urban"],
+      "typicalCustomer": "Municipalities, community organizations, schools",
+      "deploymentScale": "Local community-scale projects",
+      "priceRange": "€",
+      "keyBenefits": [
+        "Combines citizen engagement with technical solutions",
+        "Educational programs for schools and community groups",
+        "Low-tech nutrient management tools accessible to non-experts",
+        "Builds long-term community ownership and awareness",
+        "Mobile app for coordinating cleanup events and tracking impact",
+        "Creates social and environmental value simultaneously"
+      ],
+      "exampleUseCase": "Partner with 3 coastal communities to launch nutrient reduction campaigns. Train 50 community volunteers on simple nutrient management practices. Organize 6 cleanup events using ClearCoast's app to track participation and impact. Measure community engagement and local nutrient reduction over 10-week pilot."
+    }
   },
   {
     "id": "act_018",
@@ -159,7 +348,23 @@
     "country": "Estonia",
     "tags": ["communication", "citizen science", "early warning"],
     "description": "Digital signage and mobile app network for beach water quality updates.",
-    "url": "https://smartbeach.example"
+    "url": "https://smartbeach.example",
+    "startupDetails": {
+      "trlLevel": 8,
+      "targetEnvironments": ["coastal", "lakes"],
+      "typicalCustomer": "Beach operators, municipalities, tourism organizations",
+      "deploymentScale": "Individual beaches to regional networks",
+      "priceRange": "€€",
+      "keyBenefits": [
+        "Digital displays at beach entrances with real-time water quality",
+        "Color-coded safety ratings visible from parking areas",
+        "Synchronized mobile app for planning beach visits",
+        "Automated updates from sensor data or manual inputs",
+        "Multi-language support for international tourists",
+        "Low maintenance with solar-powered displays"
+      ],
+      "exampleUseCase": "Install 10 digital signage displays at popular beaches across the region. Integrate with existing water monitoring systems. Launch companion mobile app promoted through tourism websites. Track display uptime, app downloads, and user surveys to measure public awareness and behavior change during 8-week pilot."
+    }
   },
   {
     "id": "act_019",
@@ -168,7 +373,23 @@
     "country": "Sweden",
     "tags": ["decision support", "early warning", "monitoring"],
     "description": "Machine learning models for 7-day bloom forecasts based on weather and water data.",
-    "url": "https://hydropredict.example"
+    "url": "https://hydropredict.example",
+    "startupDetails": {
+      "trlLevel": 7,
+      "targetEnvironments": ["coastal", "lakes"],
+      "typicalCustomer": "Regional authorities, environmental agencies, municipalities",
+      "deploymentScale": "Regional prediction models",
+      "priceRange": "€€",
+      "keyBenefits": [
+        "7-day probabilistic bloom forecasts with 75-85% accuracy",
+        "Integrates weather, water temperature, nutrient, and historical data",
+        "Early warnings allow proactive public health measures",
+        "API for integration into existing alert systems",
+        "Continuous model improvement through machine learning",
+        "Customizable risk thresholds for different user needs"
+      ],
+      "exampleUseCase": "Implement HydroPredict AI across Turku archipelago region. Connect to regional weather services, 15 water quality sensors, and 5 years of historical bloom data. Provide daily forecast updates to municipal authorities and integrate with public information platforms. Validate forecast accuracy over 12-week pilot period."
+    }
   },
   {
     "id": "act_020",
@@ -177,7 +398,23 @@
     "country": "Finland",
     "tags": ["remediation", "biotech", "nutrient reduction"],
     "description": "Developing natural phosphorus-binding compounds from local marine resources.",
-    "url": "https://balticblue.tech"
+    "url": "https://balticblue.tech",
+    "startupDetails": {
+      "trlLevel": 5,
+      "targetEnvironments": ["coastal", "lakes"],
+      "typicalCustomer": "Environmental authorities, lake associations, municipalities",
+      "deploymentScale": "Targeted hotspot areas (1-20 hectares)",
+      "priceRange": "€€",
+      "keyBenefits": [
+        "Uses locally-sourced natural materials reducing transport costs",
+        "Specifically targets phosphorus (key bloom nutrient)",
+        "Minimal environmental impact with biodegradable compounds",
+        "Can achieve 30-50% phosphorus reduction in treated areas",
+        "Supports local blue bioeconomy and circular economy principles",
+        "One-time or seasonal application depending on severity"
+      ],
+      "exampleUseCase": "Apply Baltic Blue Tech's phosphorus-binding compound in 3 high-severity hotspot bays. Establish phosphorus monitoring at treatment sites and nearby control sites. Measure weekly for 8 weeks to document phosphorus reduction and assess impact on bloom development. Document application costs and scalability."
+    }
   },
   {
     "id": "act_021",
@@ -186,7 +423,23 @@
     "country": "Germany",
     "tags": ["communication", "decision support", "citizen science"],
     "description": "Public safety platform integrating water quality, weather, and health advisories.",
-    "url": "https://seasafe.example"
+    "url": "https://seasafe.example",
+    "startupDetails": {
+      "trlLevel": 8,
+      "targetEnvironments": ["coastal", "lakes", "rivers"],
+      "typicalCustomer": "Public health departments, municipalities, tourism offices",
+      "deploymentScale": "City-wide to regional coverage",
+      "priceRange": "€€",
+      "keyBenefits": [
+        "Unified platform combining water quality, weather, and safety info",
+        "Color-coded risk assessments easy for public to understand",
+        "Automated health advisory generation based on data thresholds",
+        "Integration with emergency alert systems",
+        "Historical data and trend visualization for authorities",
+        "Accessible via web, mobile, and public kiosks"
+      ],
+      "exampleUseCase": "Deploy SeaSafe Solutions across 20 beaches and swimming areas in the region. Integrate water quality sensors, weather forecasts, and health department guidelines. Launch public awareness campaign through local media. Run 10-week pilot tracking alert effectiveness and public health incident rates compared to previous years."
+    }
   },
   {
     "id": "act_022",
@@ -195,7 +448,23 @@
     "country": "Denmark",
     "tags": ["data visualization", "communication", "monitoring"],
     "description": "Interactive web dashboards for municipal and regional marine data transparency.",
-    "url": "https://coastalclarity.example"
+    "url": "https://coastalclarity.example",
+    "startupDetails": {
+      "trlLevel": 9,
+      "targetEnvironments": ["coastal", "lakes", "ports"],
+      "typicalCustomer": "Municipalities, regional governments, port authorities",
+      "deploymentScale": "Municipal to regional implementations",
+      "priceRange": "€",
+      "keyBenefits": [
+        "Beautiful, intuitive dashboards for public data transparency",
+        "Real-time and historical data visualization",
+        "Customizable for different stakeholder audiences",
+        "Open data API for third-party applications",
+        "Mobile-responsive design for all devices",
+        "Fast implementation with minimal technical requirements"
+      ],
+      "exampleUseCase": "Create Coastal Clarity dashboard for Turku region aggregating data from sensors, lab tests, and satellite imagery. Design public-facing view for citizens and detailed analytics view for municipal staff. Launch with press release and social media campaign. Track web analytics and gather stakeholder feedback over 8-week pilot."
+    }
   },
   {
     "id": "act_023",
