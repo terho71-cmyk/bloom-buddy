@@ -1,0 +1,227 @@
+[
+  {
+    "id": "act_001",
+    "name": "AquaSense Technologies",
+    "type": "startup",
+    "country": "Finland",
+    "tags": ["monitoring", "sensors", "early warning"],
+    "description": "Real-time water quality sensors with AI-powered bloom detection and predictive analytics.",
+    "url": "https://aquasense.example"
+  },
+  {
+    "id": "act_002",
+    "name": "BlueVision Labs",
+    "type": "startup",
+    "country": "Estonia",
+    "tags": ["monitoring", "satellite", "early warning"],
+    "description": "Satellite-based cyanobacteria monitoring using hyperspectral imaging and machine learning.",
+    "url": "https://bluevision.example"
+  },
+  {
+    "id": "act_003",
+    "name": "NutriReduce Solutions",
+    "type": "startup",
+    "country": "Sweden",
+    "tags": ["remediation", "nutrient reduction"],
+    "description": "Innovative nutrient-binding materials and biofilm systems for coastal water treatment.",
+    "url": "https://nutrireduce.example"
+  },
+  {
+    "id": "act_004",
+    "name": "EcoGuard Marine",
+    "type": "startup",
+    "country": "Denmark",
+    "tags": ["remediation", "biotech"],
+    "description": "Biological remediation using specialized bacteria to combat harmful algal blooms.",
+    "url": "https://ecoguard.example"
+  },
+  {
+    "id": "act_005",
+    "name": "WaveComm",
+    "type": "startup",
+    "country": "Finland",
+    "tags": ["communication", "decision support", "data visualization"],
+    "description": "Public-facing marine environmental data platforms with real-time alerts and forecasts.",
+    "url": "https://wavecomm.example"
+  },
+  {
+    "id": "act_006",
+    "name": "CoastalGuard AI",
+    "type": "startup",
+    "country": "Norway",
+    "tags": ["monitoring", "early warning", "decision support"],
+    "description": "AI-driven coastal monitoring system integrating multiple data sources for bloom prediction.",
+    "url": "https://coastalguard.example"
+  },
+  {
+    "id": "act_007",
+    "name": "BioMarine Tech",
+    "type": "startup",
+    "country": "Finland",
+    "tags": ["remediation", "biotech", "nutrient reduction"],
+    "description": "Sustainable biological solutions for nutrient management in coastal ecosystems.",
+    "url": "https://biomarine.example"
+  },
+  {
+    "id": "act_008",
+    "name": "AquaAlert Systems",
+    "type": "startup",
+    "country": "Germany",
+    "tags": ["communication", "early warning", "citizen science"],
+    "description": "Mobile app and SMS alert system for beach-goers and coastal communities.",
+    "url": "https://aquaalert.example"
+  },
+  {
+    "id": "act_009",
+    "name": "BlueData Analytics",
+    "type": "startup",
+    "country": "Netherlands",
+    "tags": ["data visualization", "decision support", "monitoring"],
+    "description": "Advanced analytics platform for marine environmental data integration and visualization.",
+    "url": "https://bluedata.example"
+  },
+  {
+    "id": "act_010",
+    "name": "MarineSense",
+    "type": "startup",
+    "country": "Poland",
+    "tags": ["sensors", "monitoring", "IoT"],
+    "description": "Low-cost IoT sensor networks for continuous water quality monitoring.",
+    "url": "https://marinesense.example"
+  },
+  {
+    "id": "act_011",
+    "name": "Nordic Blue Ventures",
+    "type": "investor",
+    "country": "Sweden",
+    "tags": ["monitoring", "sensors", "early warning", "remediation"],
+    "description": "Early-stage VC focused on blue economy and marine technology startups in the Nordics.",
+    "url": "https://nordicblue.example"
+  },
+  {
+    "id": "act_012",
+    "name": "Baltic Sea Fund",
+    "type": "investor",
+    "country": "Finland",
+    "tags": ["remediation", "nutrient reduction", "biotech", "monitoring"],
+    "description": "Impact fund dedicated to Baltic Sea environmental solutions and ecosystem restoration.",
+    "url": "https://balticsea.fund"
+  },
+  {
+    "id": "act_013",
+    "name": "AquaTech Capital",
+    "type": "investor",
+    "country": "Denmark",
+    "tags": ["monitoring", "sensors", "data visualization", "decision support"],
+    "description": "Growth-stage investor specializing in water technology and aquatic monitoring systems.",
+    "url": "https://aquatech.capital"
+  },
+  {
+    "id": "act_014",
+    "name": "GreenWave Investments",
+    "type": "investor",
+    "country": "Norway",
+    "tags": ["communication", "citizen science", "early warning", "decision support"],
+    "description": "Sustainable finance firm investing in marine conservation and community engagement tech.",
+    "url": "https://greenwave.invest"
+  },
+  {
+    "id": "act_015",
+    "name": "Ocean Innovators VC",
+    "type": "investor",
+    "country": "Netherlands",
+    "tags": ["remediation", "biotech", "monitoring", "sensors"],
+    "description": "Venture capital fund focused on ocean health and blue biotechnology innovations.",
+    "url": "https://oceaninnovators.vc"
+  },
+  {
+    "id": "act_016",
+    "name": "PhytoMonitor Pro",
+    "type": "startup",
+    "country": "Lithuania",
+    "tags": ["monitoring", "sensors", "data visualization"],
+    "description": "Autonomous drones and buoys for phytoplankton and algae bloom monitoring.",
+    "url": "https://phytomonitor.example"
+  },
+  {
+    "id": "act_017",
+    "name": "ClearCoast Initiative",
+    "type": "startup",
+    "country": "Latvia",
+    "tags": ["remediation", "nutrient reduction", "community"],
+    "description": "Community-driven coastal cleanup and nutrient management programs with tech support.",
+    "url": "https://clearcoast.example"
+  },
+  {
+    "id": "act_018",
+    "name": "SmartBeach Network",
+    "type": "startup",
+    "country": "Estonia",
+    "tags": ["communication", "citizen science", "early warning"],
+    "description": "Digital signage and mobile app network for beach water quality updates.",
+    "url": "https://smartbeach.example"
+  },
+  {
+    "id": "act_019",
+    "name": "HydroPredict AI",
+    "type": "startup",
+    "country": "Sweden",
+    "tags": ["decision support", "early warning", "monitoring"],
+    "description": "Machine learning models for 7-day bloom forecasts based on weather and water data.",
+    "url": "https://hydropredict.example"
+  },
+  {
+    "id": "act_020",
+    "name": "Baltic Blue Tech",
+    "type": "startup",
+    "country": "Finland",
+    "tags": ["remediation", "biotech", "nutrient reduction"],
+    "description": "Developing natural phosphorus-binding compounds from local marine resources.",
+    "url": "https://balticblue.tech"
+  },
+  {
+    "id": "act_021",
+    "name": "SeaSafe Solutions",
+    "type": "startup",
+    "country": "Germany",
+    "tags": ["communication", "decision support", "citizen science"],
+    "description": "Public safety platform integrating water quality, weather, and health advisories.",
+    "url": "https://seasafe.example"
+  },
+  {
+    "id": "act_022",
+    "name": "Coastal Clarity",
+    "type": "startup",
+    "country": "Denmark",
+    "tags": ["data visualization", "communication", "monitoring"],
+    "description": "Interactive web dashboards for municipal and regional marine data transparency.",
+    "url": "https://coastalclarity.example"
+  },
+  {
+    "id": "act_023",
+    "name": "Blue Horizon Partners",
+    "type": "investor",
+    "country": "Finland",
+    "tags": ["sensors", "monitoring", "IoT", "early warning"],
+    "description": "Seed and Series A investor in marine IoT and sensor technology companies.",
+    "url": "https://bluehorizon.partners"
+  },
+  {
+    "id": "act_024",
+    "name": "EcoSea Ventures",
+    "type": "investor",
+    "country": "Sweden",
+    "tags": ["remediation", "nutrient reduction", "biotech", "community"],
+    "description": "Impact-first fund supporting scalable solutions for marine ecosystem health.",
+    "url": "https://ecosea.ventures"
+  },
+  {
+    "id": "act_025",
+    "name": "WaterTech Angels",
+    "type": "investor",
+    "country": "Estonia",
+    "tags": ["communication", "data visualization", "decision support", "citizen science"],
+    "description": "Angel network investing in public engagement and transparency tools for water quality.",
+    "url": "https://watertech.angels"
+  }
+]
