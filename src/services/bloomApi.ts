@@ -1,5 +1,6 @@
-import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet } from "@/types/bloom";
+import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet, ProblemFitScore } from "@/types/bloom";
 import { buildPitchSnippet } from "@/lib/pitch";
+import { computeProblemFitScore } from "@/lib/fitScore";
 
 // Mock API layer - can be replaced with real API calls later
 export class BloomApi {
@@ -281,6 +282,11 @@ export class BloomApi {
   static async generatePitch(summary: BloomSummary, actor: Actor): Promise<PitchSnippet> {
     // Use the pure function from lib/pitch to build the snippet
     return buildPitchSnippet(summary, actor);
+  }
+
+  static computeFitScore(summary: BloomSummary, actor: Actor): ProblemFitScore {
+    // Use the pure function from lib/fitScore to compute fit
+    return computeProblemFitScore(summary, actor);
   }
 
   static getAvailableRegions(): string[] {
