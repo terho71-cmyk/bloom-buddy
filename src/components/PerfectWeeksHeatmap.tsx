@@ -69,6 +69,50 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
     return groups;
   }, [weeks]);
 
+  const getUseCaseColor = (useCase: AlertUseCase) => {
+    switch (useCase) {
+      case "pilot":
+        return {
+          bg: "bg-blue-500/80",
+          border: "border-blue-500",
+          text: "text-blue-500"
+        };
+      case "sales":
+        return {
+          bg: "bg-green-500/80",
+          border: "border-green-500",
+          text: "text-green-500"
+        };
+      case "investor":
+        return {
+          bg: "bg-purple-500/80",
+          border: "border-purple-500",
+          text: "text-purple-500"
+        };
+    }
+  };
+
+  const getCellColor = (matches: PerfectWeekMatch[]) => {
+    if (matches.length === 0) return "bg-muted/30 border-border/50";
+    
+    // Get unique use cases for these matches
+    const useCases = new Set<AlertUseCase>();
+    matches.forEach(match => {
+      const rule = allRules.find(r => r.id === match.ruleId);
+      if (rule) useCases.add(rule.useCase);
+    });
+    
+    // If multiple use cases, use a gradient/mixed color
+    if (useCases.size > 1) {
+      return "bg-gradient-to-br from-blue-500/60 via-green-500/60 to-purple-500/60 border-primary";
+    }
+    
+    // Single use case - use its color
+    const useCase = Array.from(useCases)[0];
+    const colors = getUseCaseColor(useCase);
+    return `${colors.bg} ${colors.border}`;
+  };
+
   const getIntensityColor = (matchCount: number) => {
     if (matchCount === 0) return "bg-muted/30";
     if (matchCount === 1) return "bg-primary/30";
@@ -202,24 +246,29 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
       <CardContent>
         <div className="space-y-6">
           {/* Legend */}
-          <div className="flex flex-wrap items-center gap-3 text-sm">
-            <span className="text-muted-foreground text-xs">Intensity:</span>
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded bg-muted/30 border" />
-                <span className="text-xs text-muted-foreground">None</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded bg-primary/30 border" />
-                <span className="text-xs text-muted-foreground">1</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded bg-primary/60 border" />
-                <span className="text-xs text-muted-foreground">2</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded bg-primary border" />
-                <span className="text-xs text-muted-foreground">3+</span>
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-3 text-sm">
+              <span className="text-muted-foreground text-xs font-medium">Use Case Colors:</span>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-4 h-4 rounded bg-blue-500/80 border border-blue-500" />
+                  <Target className="h-3 w-3 text-blue-500" />
+                  <span className="text-xs text-muted-foreground">Pilots</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-4 h-4 rounded bg-green-500/80 border border-green-500" />
+                  <TrendingUp className="h-3 w-3 text-green-500" />
+                  <span className="text-xs text-muted-foreground">Sales</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-4 h-4 rounded bg-purple-500/80 border border-purple-500" />
+                  <Users className="h-3 w-3 text-purple-500" />
+                  <span className="text-xs text-muted-foreground">Investors</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-4 h-4 rounded bg-gradient-to-br from-blue-500/60 via-green-500/60 to-purple-500/60 border border-primary" />
+                  <span className="text-xs text-muted-foreground">Multiple</span>
+                </div>
               </div>
             </div>
           </div>
@@ -262,13 +311,13 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
                       {weeks.map(week => {
                         const matches = filteredHeatmapData[region]?.[week] || [];
                         const matchCount = matches.length;
-                        const intensityColor = getIntensityColor(matchCount);
+                        const cellColor = getCellColor(matches);
 
                         return (
                           <Tooltip key={`${region}-${week}`}>
                             <TooltipTrigger asChild>
                               <div
-                                className={`w-8 h-8 rounded border border-border/50 cursor-pointer transition-all hover:scale-110 hover:border-primary hover:shadow-md ${intensityColor}`}
+                                className={`w-8 h-8 rounded cursor-pointer transition-all hover:scale-110 hover:shadow-md ${cellColor}`}
                               />
                             </TooltipTrigger>
                             {matchCount > 0 && (
@@ -278,12 +327,19 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
                                     {region} - Week {week}
                                   </div>
                                   <div className="text-xs space-y-1">
-                                    {matches.map((match, idx) => (
-                                      <div key={idx} className="border-l-2 border-primary pl-2">
-                                        <div className="font-medium">{match.ruleName}</div>
-                                        <div className="text-muted-foreground">{match.reason}</div>
-                                      </div>
-                                    ))}
+                                    {matches.map((match, idx) => {
+                                      const rule = allRules.find(r => r.id === match.ruleId);
+                                      const colors = rule ? getUseCaseColor(rule.useCase) : null;
+                                      return (
+                                        <div key={idx} className={`border-l-2 pl-2 ${colors?.border || 'border-primary'}`}>
+                                          <div className="flex items-center gap-1.5">
+                                            {rule && getUseCaseIcon(rule.useCase)}
+                                            <span className="font-medium">{match.ruleName}</span>
+                                          </div>
+                                          <div className="text-muted-foreground">{match.reason}</div>
+                                        </div>
+                                      );
+                                    })}
                                   </div>
                                 </div>
                               </TooltipContent>
