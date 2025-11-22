@@ -1,9 +1,10 @@
-import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet, ProblemFitScore, StartupAlertRule, PerfectWeekOverview, CaseStudyInput, StartupCaseStudy } from "@/types/bloom";
+import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet, ProblemFitScore, StartupAlertRule, PerfectWeekOverview, CaseStudyInput, StartupCaseStudy, SolutionGap } from "@/types/bloom";
 import { buildPitchSnippet } from "@/lib/pitch";
 import { computeProblemFitScore } from "@/lib/fitScore";
 import { buildInvestorViewSummary } from "@/lib/investorView";
 import { findPerfectWeeksForStartup } from "@/lib/alerts";
 import { buildCaseStudyFromInput } from "@/lib/caseStudies";
+import { buildGapRadar } from "@/lib/gapRadar";
 
 // Mock API layer - can be replaced with real API calls later
 export class BloomApi {
@@ -537,5 +538,15 @@ export class BloomApi {
     if (this.observations.length === 0) await this.loadData();
     
     return this.caseStudies;
+  }
+  
+  // Solution Gap Radar methods
+  static async analyzeGaps(
+    summary: BloomSummary
+  ): Promise<SolutionGap[]> {
+    if (this.observations.length === 0) await this.loadData();
+    
+    const startups = this.actors.filter(a => a.type === "startup");
+    return buildGapRadar(summary, startups);
   }
 }
