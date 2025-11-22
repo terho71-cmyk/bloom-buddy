@@ -1,6 +1,7 @@
 import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet, ProblemFitScore } from "@/types/bloom";
 import { buildPitchSnippet } from "@/lib/pitch";
 import { computeProblemFitScore } from "@/lib/fitScore";
+import { buildInvestorViewSummary } from "@/lib/investorView";
 
 // Mock API layer - can be replaced with real API calls later
 export class BloomApi {
@@ -294,7 +295,6 @@ export class BloomApi {
     investor: Actor
   ): import("@/types/bloom").InvestorViewSummary {
     const allActors = this.getAllActors();
-    const { buildInvestorViewSummary } = require("@/lib/investorView");
     return buildInvestorViewSummary(summary, investor, allActors);
   }
 
