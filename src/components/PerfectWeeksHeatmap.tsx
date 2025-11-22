@@ -30,11 +30,13 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
       
       // Load rules first
       const rules = BloomApi.getStartupAlerts(startupId);
+      console.log('Loaded rules for startup', startupId, ':', rules);
       setAllRules(rules);
       
       for (const region of regions) {
         data[region] = {};
         const result = await BloomApi.findPerfectWeeks(startupId, region, weeks);
+        console.log(`Perfect weeks for ${region}:`, result.matches.length, 'matches');
         
         result.matches.forEach(match => {
           if (!data[region][match.week]) {
@@ -44,6 +46,7 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
         });
       }
       
+      console.log('Complete heatmap data:', data);
       setHeatmapData(data);
       setLoading(false);
     };
@@ -156,8 +159,20 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
 
   // Filter matches based on selected use cases
   const filteredHeatmapData = useMemo(() => {
-    if (selectedUseCases.size === 0) return {};
-    if (allRules.length === 0) return heatmapData; // Return all if rules not loaded yet
+    console.log('Filtering with:', {
+      selectedUseCases: Array.from(selectedUseCases),
+      allRulesCount: allRules.length,
+      heatmapDataRegions: Object.keys(heatmapData)
+    });
+    
+    if (selectedUseCases.size === 0) {
+      console.log('No use cases selected, returning empty');
+      return {};
+    }
+    if (allRules.length === 0) {
+      console.log('No rules loaded yet, returning all heatmap data');
+      return heatmapData;
+    }
     
     const filtered: Record<string, Record<number, PerfectWeekMatch[]>> = {};
     
@@ -166,7 +181,11 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
       Object.entries(weeks).forEach(([week, matches]) => {
         const filteredMatches = matches.filter(match => {
           const rule = allRules.find(r => r.id === match.ruleId);
-          return rule && selectedUseCases.has(rule.useCase);
+          const hasMatch = rule && selectedUseCases.has(rule.useCase);
+          if (rule) {
+            console.log(`Match ${match.ruleId}: rule useCase=${rule.useCase}, selected=${hasMatch}`);
+          }
+          return hasMatch;
         });
         if (filteredMatches.length > 0) {
           filtered[region][parseInt(week)] = filteredMatches;
@@ -174,6 +193,7 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
       });
     });
     
+    console.log('Filtered heatmap data:', filtered);
     return filtered;
   }, [heatmapData, selectedUseCases, allRules]);
 
