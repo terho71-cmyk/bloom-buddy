@@ -38,19 +38,21 @@ export function LocationPickerMap({ onLocationChange }: LocationPickerMapProps) 
     <Card className="overflow-hidden">
       <div className="relative h-[500px] w-full">
         <MapContainer
-          center={[60.1699, 24.9384]} // Helsinki, Finland
+          center={[60.1699, 24.9384]}
           zoom={6}
           className="h-full w-full"
           style={{ zIndex: 0 }}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <MapClickHandler onLocationSelect={handleLocationSelect} />
-          {selectedPosition && (
-            <Marker position={[selectedPosition.lat, selectedPosition.lon]} />
-          )}
+          <>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <MapClickHandler onLocationSelect={handleLocationSelect} />
+            {selectedPosition && (
+              <Marker position={[selectedPosition.lat, selectedPosition.lon]} />
+            )}
+          </>
         </MapContainer>
       </div>
       <div className="p-4 border-t bg-card">
