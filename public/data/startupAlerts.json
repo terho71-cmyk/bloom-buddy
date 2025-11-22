@@ -24,6 +24,19 @@
       "isActive": true
     }
   ],
+  "act_002": [
+    {
+      "id": "alert_002_1",
+      "name": "High-severity satellite opportunities",
+      "description": "Best weeks for demonstrating satellite monitoring value",
+      "useCase": "pilot",
+      "conditions": {
+        "minOverallRisk": "high",
+        "minHighSeverityHotspots": 2
+      },
+      "isActive": true
+    }
+  ],
   "act_003": [
     {
       "id": "alert_003_1",
@@ -33,6 +46,19 @@
       "conditions": {
         "minOverallRisk": "high",
         "minHighSeverityHotspots": 3
+      },
+      "isActive": true
+    }
+  ],
+  "act_004": [
+    {
+      "id": "alert_004_1",
+      "name": "Rising trends for forecasting",
+      "description": "Perfect weeks to showcase AI prediction capabilities",
+      "useCase": "sales",
+      "conditions": {
+        "minOverallRisk": "medium",
+        "requireIncreasingTrend": true
       },
       "isActive": true
     }
@@ -58,6 +84,55 @@
         "minOverallRisk": "high",
         "minHighSeverityHotspots": 2,
         "requireIncreasingTrend": true
+      },
+      "isActive": true
+    }
+  ],
+  "act_006": [
+    {
+      "id": "alert_006_1",
+      "name": "High-risk filtration opportunities",
+      "description": "Ideal conditions for water treatment system pilots",
+      "useCase": "pilot",
+      "conditions": {
+        "minOverallRisk": "high",
+        "minHighSeverityHotspots": 2
+      },
+      "isActive": true
+    }
+  ],
+  "act_007": [
+    {
+      "id": "alert_007_1",
+      "name": "Tourist beach threats",
+      "description": "Perfect timing for UV treatment demos in tourist areas",
+      "useCase": "pilot",
+      "conditions": {
+        "minOverallRisk": "high",
+        "requireTouristAreasHint": true
+      },
+      "isActive": true
+    }
+  ],
+  "act_008": [
+    {
+      "id": "alert_008_1",
+      "name": "Medium-risk educational opportunities",
+      "description": "Good weeks for educational platform outreach",
+      "useCase": "sales",
+      "conditions": {
+        "minOverallRisk": "medium"
+      },
+      "isActive": true
+    },
+    {
+      "id": "alert_008_2",
+      "name": "Tourist area awareness campaigns",
+      "description": "Ideal for showcasing citizen science platform",
+      "useCase": "pilot",
+      "conditions": {
+        "minOverallRisk": "medium",
+        "requireTouristAreasHint": true
       },
       "isActive": true
     }
