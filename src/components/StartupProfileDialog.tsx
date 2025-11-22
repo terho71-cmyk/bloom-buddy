@@ -15,6 +15,7 @@ import { BloomApi } from "@/services/bloomApi";
 import { PitchSnippet } from "@/types/bloom";
 import { PitchSnippetDialog } from "./PitchSnippetDialog";
 import { RegionWeekPickerDialog } from "./RegionWeekPickerDialog";
+import { ImpactSandbox } from "./ImpactSandbox";
 
 interface StartupProfileDialogProps {
   open: boolean;
@@ -360,6 +361,14 @@ Website: ${startup.url}
                   </p>
                 </div>
               </section>
+
+              {/* Impact Sandbox */}
+              <ImpactSandbox
+                actor={startup}
+                region={region}
+                week={week}
+                onNeedRegionWeek={() => setFitPickerDialogOpen(true)}
+              />
 
               {/* Footer note */}
               <div className="pt-4 border-t space-y-3">

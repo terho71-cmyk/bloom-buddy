@@ -82,6 +82,29 @@ export interface ProblemFitScore {
   drivers: string[];    // bullet reasons
 }
 
+export interface ImpactSimulationInput {
+  region: string;
+  startWeek: number;
+  durationWeeks: number; // e.g. 4, 8, 12
+  deploymentIntensity: "low" | "medium" | "high";
+}
+
+export interface RiskPoint {
+  weekOffset: number;   // 0 = startWeek
+  baselineRisk: number; // 0–100 normalized
+  withSolutionRisk: number; // 0–100 normalized
+}
+
+export interface ImpactSimulationResult {
+  region: string;
+  startWeek: number;
+  durationWeeks: number;
+  actorId: string;
+  points: RiskPoint[];
+  headline: string;       // short summary, e.g. "20% fewer high-risk weeks"
+  notes: string[];        // bullet points explaining assumptions
+}
+
 export interface BulletinResponse {
   citizenBulletin: string;
   expertNote: string;
