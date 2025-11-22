@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { BloomApi } from "@/services/bloomApi";
-import { PerfectWeekMatch, AlertUseCase } from "@/types/bloom";
+import { PerfectWeekMatch, AlertUseCase, StartupAlertRule } from "@/types/bloom";
 import { Calendar, TrendingUp, Target, Users, Rocket } from "lucide-react";
 
 interface PerfectWeeksHeatmapProps {
@@ -17,6 +17,7 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
   const [selectedUseCases, setSelectedUseCases] = useState<Set<AlertUseCase>>(
     new Set(["pilot", "sales", "investor"])
   );
+  const [allRules, setAllRules] = useState<StartupAlertRule[]>([]);
   
   const regions = ["Turku archipelago", "Helsinki archipelago", "Vaasa archipelago"];
   const weeks = Array.from({ length: 14 }, (_, i) => 17 + i); // weeks 17-30
@@ -26,6 +27,10 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
     const loadHeatmapData = async () => {
       setLoading(true);
       const data: Record<string, Record<number, PerfectWeekMatch[]>> = {};
+      
+      // Load rules first
+      const rules = BloomApi.getStartupAlerts(startupId);
+      setAllRules(rules);
       
       for (const region of regions) {
         data[region] = {};
@@ -108,6 +113,7 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
   // Filter matches based on selected use cases
   const filteredHeatmapData = useMemo(() => {
     if (selectedUseCases.size === 0) return {};
+    if (allRules.length === 0) return heatmapData; // Return all if rules not loaded yet
     
     const filtered: Record<string, Record<number, PerfectWeekMatch[]>> = {};
     
@@ -115,9 +121,7 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
       filtered[region] = {};
       Object.entries(weeks).forEach(([week, matches]) => {
         const filteredMatches = matches.filter(match => {
-          // Get the rule to check its use case
-          const rules = BloomApi.getStartupAlerts(startupId);
-          const rule = rules.find(r => r.id === match.ruleId);
+          const rule = allRules.find(r => r.id === match.ruleId);
           return rule && selectedUseCases.has(rule.useCase);
         });
         if (filteredMatches.length > 0) {
@@ -127,7 +131,7 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
     });
     
     return filtered;
-  }, [heatmapData, selectedUseCases, startupId]);
+  }, [heatmapData, selectedUseCases, allRules]);
 
   const totalPerfectWeeks = useMemo(() => {
     let total = 0;
