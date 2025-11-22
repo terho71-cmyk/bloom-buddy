@@ -109,13 +109,22 @@ const Index = () => {
                 Cyanobacteria situation & blue-economy solution finder for Apelago
               </p>
             </div>
-            <NavLink 
-              to="/startups" 
-              className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
-            >
-              <Building2 className="h-5 w-5" />
-              <span>Startup Marketplace</span>
-            </NavLink>
+            <div className="flex gap-2">
+              <NavLink 
+                to="/startups" 
+                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
+              >
+                <Building2 className="h-5 w-5" />
+                <span>Startups</span>
+              </NavLink>
+              <NavLink 
+                to="/investors" 
+                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
+              >
+                <Building2 className="h-5 w-5" />
+                <span>Investors</span>
+              </NavLink>
+            </div>
           </div>
         </div>
       </header>

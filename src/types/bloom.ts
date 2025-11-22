@@ -28,6 +28,9 @@ export interface BloomSummary {
 
 export type EnvironmentType = "coastal" | "lakes" | "rivers" | "ports" | "farms" | "urban";
 
+export type StageFocus = "pre-seed" | "seed" | "series-a" | "growth";
+export type GeographyFocus = "nordics" | "europe" | "global";
+
 export interface StartupDetails {
   trlLevel?: number; // 1–9
   targetEnvironments: EnvironmentType[];
@@ -36,6 +39,13 @@ export interface StartupDetails {
   priceRange: string; // e.g. "€", "€€", "€€€"
   keyBenefits: string[];
   exampleUseCase: string;
+}
+
+export interface InvestorDetails {
+  stageFocus: StageFocus[];
+  geographyFocus: GeographyFocus[];
+  focusTags: string[];        // e.g. ["blue-economy", "water-tech", "climate", "deeptech"]
+  portfolioTags: string[];    // themes they already have in portfolio
 }
 
 export interface Actor {
@@ -47,6 +57,7 @@ export interface Actor {
   description: string;
   url: string;
   startupDetails?: StartupDetails;
+  investorDetails?: InvestorDetails;
 }
 
 export interface Recommendation {
@@ -103,6 +114,38 @@ export interface ImpactSimulationResult {
   points: RiskPoint[];
   headline: string;       // short summary, e.g. "20% fewer high-risk weeks"
   notes: string[];        // bullet points explaining assumptions
+}
+
+export type RelevanceLabel = "Low" | "Medium" | "High";
+
+export interface InvestorSituationRelevance {
+  score: number;           // 0–100
+  label: RelevanceLabel;
+  explanation: string;     // 1–3 sentences
+}
+
+export interface DealFlowItem {
+  startup: Actor;          // type === "startup"
+  fitScore: number;        // reuse Problem Fit Score or similar
+  fitLabel: RelevanceLabel;
+  reasons: string[];       // short bullet reasons
+}
+
+export interface PortfolioFitInsight {
+  text: string;            // e.g. "Complements your portfolio focus on sensors with citizen communication tools."
+}
+
+export interface UnderServedTheme {
+  theme: string;           // e.g. "Nutrient sequestration for farms"
+  description: string;
+  reason: string;          // why it's under-served (few/no startups, high risk)
+}
+
+export interface InvestorViewSummary {
+  situationRelevance: InvestorSituationRelevance;
+  topDealFlow: DealFlowItem[];
+  portfolioInsights: PortfolioFitInsight[];
+  underServedThemes: UnderServedTheme[];
 }
 
 export interface BulletinResponse {

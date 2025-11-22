@@ -1,0 +1,214 @@
+import { useState } from "react";
+import { Actor } from "@/types/bloom";
+import { BloomApi } from "@/services/bloomApi";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TrendingUp, Building2, MapPin, Target } from "lucide-react";
+import { InvestorDashboard } from "@/components/InvestorDashboard";
+
+export default function Investors() {
+  const [actors] = useState<Actor[]>(() => BloomApi.getAllActors());
+  const investors = actors.filter(a => a.type === "investor");
+  
+  const [selectedInvestor, setSelectedInvestor] = useState<Actor | null>(null);
+  const [region, setRegion] = useState<string>("");
+  const [week, setWeek] = useState<number | null>(null);
+  const [showDashboard, setShowDashboard] = useState(false);
+  
+  const [regions] = useState<string[]>(() => BloomApi.getAvailableRegions());
+  const [weeks, setWeeks] = useState<number[]>([]);
+
+  const handleRegionChange = (selectedRegion: string) => {
+    setRegion(selectedRegion);
+    const availableWeeks = BloomApi.getWeeksForRegion(selectedRegion);
+    setWeeks(availableWeeks);
+    if (availableWeeks.length > 0) {
+      setWeek(availableWeeks[0]);
+    }
+  };
+
+  const handleOpenDashboard = (investor: Actor) => {
+    setSelectedInvestor(investor);
+    if (region && week !== null) {
+      setShowDashboard(true);
+    }
+  };
+
+  if (showDashboard && selectedInvestor && region && week !== null) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto py-8 px-4">
+          <Button 
+            onClick={() => setShowDashboard(false)} 
+            variant="outline"
+            className="mb-6"
+          >
+            ← Back to investors
+          </Button>
+          
+          <InvestorDashboard
+            investor={selectedInvestor}
+            region={region}
+            week={week}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto py-8 px-4 max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <TrendingUp className="h-8 w-8 text-primary" />
+            <h1 className="text-4xl font-heading font-bold">Investor View</h1>
+          </div>
+          <p className="text-lg text-muted-foreground">
+            See how cyanobacteria situations translate into deal flow and portfolio opportunities.
+          </p>
+        </div>
+
+        {/* Region & Week Selection */}
+        <Card className="p-6 mb-8">
+          <h2 className="text-lg font-heading font-semibold mb-4">Select Context</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">Region</label>
+              <Select value={region} onValueChange={handleRegionChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a region" />
+                </SelectTrigger>
+                <SelectContent>
+                  {regions.map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {r}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">Week</label>
+              <Select
+                value={week?.toString() || ""}
+                onValueChange={(val) => setWeek(parseInt(val))}
+                disabled={!region}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={region ? "Choose a week" : "Select region first"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {weeks.map((w) => (
+                    <SelectItem key={w} value={w.toString()}>
+                      Week {w}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {region && week !== null && (
+            <div className="mt-4 p-3 bg-accent/10 border border-accent/20 rounded-md">
+              <p className="text-sm">
+                <strong>Context selected:</strong> {region}, Week {week}
+              </p>
+            </div>
+          )}
+        </Card>
+
+        {/* Investors Grid */}
+        <div>
+          <h2 className="text-2xl font-heading font-semibold mb-4">Investors</h2>
+          
+          {investors.length === 0 ? (
+            <Card className="p-8 text-center">
+              <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground">No investors available in the dataset.</p>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {investors.map((investor) => (
+                <Card key={investor.id} className="p-6 hover:shadow-lg transition-shadow">
+                  <div className="space-y-4">
+                    {/* Header */}
+                    <div>
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="text-xl font-heading font-semibold">{investor.name}</h3>
+                        <Building2 className="h-5 w-5 text-accent flex-shrink-0" />
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <MapPin className="h-3 w-3" />
+                        <span>{investor.country}</span>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {investor.description}
+                    </p>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {investor.tags.slice(0, 3).map((tag, idx) => (
+                        <Badge key={idx} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                      {investor.tags.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{investor.tags.length - 3}
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Investor Details */}
+                    {investor.investorDetails && (
+                      <div className="space-y-2 pt-2 border-t">
+                        <div>
+                          <p className="text-xs font-medium text-muted-foreground">Stage Focus</p>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {investor.investorDetails.stageFocus.map((stage, idx) => (
+                              <Badge key={idx} variant="outline" className="text-xs">
+                                {stage}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-muted-foreground">Geography</p>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {investor.investorDetails.geographyFocus.map((geo, idx) => (
+                              <Badge key={idx} variant="outline" className="text-xs">
+                                {geo}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action */}
+                    <Button
+                      onClick={() => handleOpenDashboard(investor)}
+                      disabled={!region || week === null}
+                      className="w-full gap-2"
+                    >
+                      <Target className="h-4 w-4" />
+                      {region && week !== null ? "Open investor dashboard" : "Select region & week first"}
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
