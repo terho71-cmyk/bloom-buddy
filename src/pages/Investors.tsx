@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TrendingUp, Building2, MapPin, Target } from "lucide-react";
 import { InvestorDashboard } from "@/components/InvestorDashboard";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Investors() {
+  const { toast } = useToast();
   const [actors] = useState<Actor[]>(() => BloomApi.getAllActors());
   const investors = actors.filter(a => a.type === "investor");
   
@@ -33,6 +35,13 @@ export default function Investors() {
     setSelectedInvestor(investor);
     if (region && week !== null) {
       setShowDashboard(true);
+    } else {
+      // Show toast prompting user to select region and week
+      toast({
+        title: "Select region and week first",
+        description: "Please choose a region and week above to view the investor dashboard.",
+        variant: "default"
+      });
     }
   };
 
@@ -73,8 +82,14 @@ export default function Investors() {
         </div>
 
         {/* Region & Week Selection */}
-        <Card className="p-6 mb-8">
-          <h2 className="text-lg font-heading font-semibold mb-4">Select Context</h2>
+        <Card className="p-6 mb-8 border-2 border-primary/20">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+            <h2 className="text-lg font-heading font-semibold">Step 1: Select Context</h2>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Choose a region and week to analyze investment opportunities
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium mb-2 block">Region</label>
@@ -114,9 +129,10 @@ export default function Investors() {
           </div>
 
           {region && week !== null && (
-            <div className="mt-4 p-3 bg-accent/10 border border-accent/20 rounded-md">
-              <p className="text-sm">
-                <strong>Context selected:</strong> {region}, Week {week}
+            <div className="mt-4 p-3 bg-primary/10 border border-primary/20 rounded-md flex items-center gap-2">
+              <Target className="h-4 w-4 text-primary" />
+              <p className="text-sm font-medium">
+                Ready! Context selected: {region}, Week {week}
               </p>
             </div>
           )}
@@ -124,7 +140,20 @@ export default function Investors() {
 
         {/* Investors Grid */}
         <div>
-          <h2 className="text-2xl font-heading font-semibold mb-4">Investors</h2>
+          <div className="flex items-center gap-2 mb-2">
+            {region && week !== null && (
+              <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+            )}
+            <h2 className="text-2xl font-heading font-semibold">
+              {region && week !== null ? "Step 2: Choose Investor" : "Investors"}
+            </h2>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            {region && week !== null 
+              ? "Click on any investor below to view their personalized dashboard"
+              : "Select a region and week above to get started"
+            }
+          </p>
           
           {investors.length === 0 ? (
             <Card className="p-8 text-center">
@@ -196,11 +225,11 @@ export default function Investors() {
                     {/* Action */}
                     <Button
                       onClick={() => handleOpenDashboard(investor)}
-                      disabled={!region || week === null}
                       className="w-full gap-2"
+                      variant={region && week !== null ? "default" : "outline"}
                     >
                       <Target className="h-4 w-4" />
-                      {region && week !== null ? "Open investor dashboard" : "Select region & week first"}
+                      Open investor dashboard
                     </Button>
                   </div>
                 </Card>
