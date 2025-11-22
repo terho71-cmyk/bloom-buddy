@@ -2,9 +2,10 @@ import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 import { BloomApi } from "@/services/bloomApi";
-import { PerfectWeekMatch } from "@/types/bloom";
-import { Calendar, TrendingUp } from "lucide-react";
+import { PerfectWeekMatch, AlertUseCase } from "@/types/bloom";
+import { Calendar, TrendingUp, Target, Users, Rocket } from "lucide-react";
 
 interface PerfectWeeksHeatmapProps {
   startupId: string;
@@ -13,6 +14,9 @@ interface PerfectWeeksHeatmapProps {
 export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
   const [heatmapData, setHeatmapData] = useState<Record<string, Record<number, PerfectWeekMatch[]>>>({});
   const [loading, setLoading] = useState(true);
+  const [selectedUseCases, setSelectedUseCases] = useState<Set<AlertUseCase>>(
+    new Set(["pilot", "sales", "investor"])
+  );
   
   const regions = ["Turku archipelago", "Helsinki archipelago", "Vaasa archipelago"];
   const weeks = Array.from({ length: 14 }, (_, i) => 17 + i); // weeks 17-30
@@ -67,13 +71,71 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
     return "bg-primary";
   };
 
+  const toggleUseCase = (useCase: AlertUseCase) => {
+    setSelectedUseCases(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(useCase)) {
+        newSet.delete(useCase);
+      } else {
+        newSet.add(useCase);
+      }
+      return newSet;
+    });
+  };
+
+  const getUseCaseIcon = (useCase: AlertUseCase) => {
+    switch (useCase) {
+      case "pilot":
+        return <Target className="h-3 w-3" />;
+      case "sales":
+        return <TrendingUp className="h-3 w-3" />;
+      case "investor":
+        return <Users className="h-3 w-3" />;
+    }
+  };
+
+  const getUseCaseLabel = (useCase: AlertUseCase) => {
+    switch (useCase) {
+      case "pilot":
+        return "Pilots";
+      case "sales":
+        return "Sales";
+      case "investor":
+        return "Investors";
+    }
+  };
+
+  // Filter matches based on selected use cases
+  const filteredHeatmapData = useMemo(() => {
+    if (selectedUseCases.size === 0) return {};
+    
+    const filtered: Record<string, Record<number, PerfectWeekMatch[]>> = {};
+    
+    Object.entries(heatmapData).forEach(([region, weeks]) => {
+      filtered[region] = {};
+      Object.entries(weeks).forEach(([week, matches]) => {
+        const filteredMatches = matches.filter(match => {
+          // Get the rule to check its use case
+          const rules = BloomApi.getStartupAlerts(startupId);
+          const rule = rules.find(r => r.id === match.ruleId);
+          return rule && selectedUseCases.has(rule.useCase);
+        });
+        if (filteredMatches.length > 0) {
+          filtered[region][parseInt(week)] = filteredMatches;
+        }
+      });
+    });
+    
+    return filtered;
+  }, [heatmapData, selectedUseCases, startupId]);
+
   const totalPerfectWeeks = useMemo(() => {
     let total = 0;
-    Object.values(heatmapData).forEach(regionData => {
+    Object.values(filteredHeatmapData).forEach(regionData => {
       total += Object.keys(regionData).length;
     });
     return total;
-  }, [heatmapData]);
+  }, [filteredHeatmapData]);
 
   if (loading) {
     return (
@@ -110,6 +172,28 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
         <CardDescription>
           Heatmap showing ideal weeks for outreach across all regions
         </CardDescription>
+        
+        {/* Use Case Filters */}
+        <div className="flex flex-wrap items-center gap-2 pt-4">
+          <span className="text-sm text-muted-foreground mr-2">Filter by use case:</span>
+          {(["pilot", "sales", "investor"] as AlertUseCase[]).map(useCase => (
+            <Button
+              key={useCase}
+              variant={selectedUseCases.has(useCase) ? "default" : "outline"}
+              size="sm"
+              onClick={() => toggleUseCase(useCase)}
+              className="gap-1.5"
+            >
+              {getUseCaseIcon(useCase)}
+              {getUseCaseLabel(useCase)}
+            </Button>
+          ))}
+          {selectedUseCases.size === 0 && (
+            <span className="text-xs text-muted-foreground italic ml-2">
+              Select at least one use case
+            </span>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
@@ -172,7 +256,7 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
                     </div>
                     <div className="flex gap-0.5">
                       {weeks.map(week => {
-                        const matches = heatmapData[region]?.[week] || [];
+                        const matches = filteredHeatmapData[region]?.[week] || [];
                         const matchCount = matches.length;
                         const intensityColor = getIntensityColor(matchCount);
 
@@ -213,7 +297,7 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
           {/* Summary stats */}
           <div className="grid grid-cols-3 gap-4 pt-4 border-t">
             {regions.map(region => {
-              const perfectWeeksCount = Object.keys(heatmapData[region] || {}).length;
+              const perfectWeeksCount = Object.keys(filteredHeatmapData[region] || {}).length;
               return (
                 <div key={region} className="text-center">
                   <div className="text-2xl font-bold text-primary">{perfectWeeksCount}</div>
