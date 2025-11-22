@@ -181,6 +181,45 @@ export interface PerfectWeekOverview {
   matches: PerfectWeekMatch[];
 }
 
+export interface CaseStudyInput {
+  startupId: string;
+  region: string;
+  timePeriod: string;
+  customerName: string;
+  summaryOfPilot: string;
+  keyActions: string[];
+  observedResults: string[];
+  metrics?: {
+    label: string;
+    value: string;
+  }[];
+}
+
+export interface CaseStudySection {
+  title: string;
+  body: string;
+  bullets?: string[];
+}
+
+export interface StartupCaseStudy {
+  id: string;
+  startupId: string;
+  region: string;
+  timePeriod: string;
+  customerName: string;
+  title: string;
+  heroSummary: string;
+  problem: CaseStudySection;
+  solution: CaseStudySection;
+  results: CaseStudySection;
+  nextSteps: CaseStudySection;
+  metrics?: {
+    label: string;
+    value: string;
+  }[];
+  createdAt: string;
+}
+
 export interface BulletinResponse {
   citizenBulletin: string;
   expertNote: string;
