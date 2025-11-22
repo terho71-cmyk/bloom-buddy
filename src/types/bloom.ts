@@ -220,6 +220,32 @@ export interface StartupCaseStudy {
   createdAt: string;
 }
 
+export type ProblemThemeId =
+  | "early_warning"
+  | "citizen_communication"
+  | "tourism_safety"
+  | "nutrient_reduction"
+  | "in_situ_remediation"
+  | "farmer_tools"
+  | "governance_planning"
+  | "data_integration";
+
+export interface ProblemTheme {
+  id: ProblemThemeId;
+  title: string;
+  description: string;
+  coverageTags: string[];
+}
+
+export interface SolutionGap {
+  theme: ProblemTheme;
+  severityScore: number;
+  coverageScore: number;
+  gapScore: number;
+  summary: string;
+  drivers: string[];
+}
+
 export interface BulletinResponse {
   citizenBulletin: string;
   expertNote: string;

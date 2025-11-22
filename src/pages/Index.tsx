@@ -7,7 +7,7 @@ import { ActorRecommendations } from "@/components/ActorRecommendations";
 import { BloomApi } from "@/services/bloomApi";
 import { BloomSummary, BulletinResponse, Recommendation } from "@/types/bloom";
 import { useToast } from "@/hooks/use-toast";
-import { Waves, Building2 } from "lucide-react";
+import { Waves, Building2, Radar } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
 const Index = () => {
@@ -123,6 +123,13 @@ const Index = () => {
               >
                 <Building2 className="h-5 w-5" />
                 <span>Investors</span>
+              </NavLink>
+              <NavLink 
+                to="/solution-gaps" 
+                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
+              >
+                <Radar className="h-5 w-5" />
+                <span>Gaps</span>
               </NavLink>
             </div>
           </div>
