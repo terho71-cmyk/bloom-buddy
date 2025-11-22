@@ -126,7 +126,7 @@ const Index = () => {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <Waves className="h-8 w-8" />
-                <h1 className="text-4xl font-heading font-bold">BlueBloom Hub</h1>
+                <h1 className="text-4xl font-heading font-bold">BlueBloom</h1>
               </div>
               <p className="text-lg opacity-90">
                 Cyanobacteria situation & blue-economy solution finder for Apelago
@@ -263,7 +263,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t mt-16 py-6 bg-card">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>BlueBloom Hub • Powered by Apelago • Mock data for demonstration</p>
+          <p>BlueBloom • Powered by Apelago • Mock data for demonstration</p>
         </div>
       </footer>
       
