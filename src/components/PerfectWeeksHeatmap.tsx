@@ -114,40 +114,40 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
       <CardContent>
         <div className="space-y-6">
           {/* Legend */}
-          <div className="flex items-center gap-4 text-sm">
-            <span className="text-muted-foreground">Match intensity:</span>
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <span className="text-muted-foreground text-xs">Intensity:</span>
+            <div className="flex flex-wrap items-center gap-2">
               <div className="flex items-center gap-1">
-                <div className="w-4 h-4 rounded bg-muted/30 border" />
+                <div className="w-3 h-3 rounded bg-muted/30 border" />
                 <span className="text-xs text-muted-foreground">None</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-4 h-4 rounded bg-primary/30 border" />
-                <span className="text-xs text-muted-foreground">1 rule</span>
+                <div className="w-3 h-3 rounded bg-primary/30 border" />
+                <span className="text-xs text-muted-foreground">1</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-4 h-4 rounded bg-primary/60 border" />
-                <span className="text-xs text-muted-foreground">2 rules</span>
+                <div className="w-3 h-3 rounded bg-primary/60 border" />
+                <span className="text-xs text-muted-foreground">2</span>
               </div>
               <div className="flex items-center gap-1">
-                <div className="w-4 h-4 rounded bg-primary border" />
-                <span className="text-xs text-muted-foreground">3+ rules</span>
+                <div className="w-3 h-3 rounded bg-primary border" />
+                <span className="text-xs text-muted-foreground">3+</span>
               </div>
             </div>
           </div>
 
           {/* Heatmap Grid */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto -mx-6 px-6">
             <TooltipProvider>
-              <div className="inline-block min-w-full">
+              <div className="min-w-max">
                 {/* Month headers */}
                 <div className="flex mb-2">
-                  <div className="w-40 flex-shrink-0" />
+                  <div className="w-32 flex-shrink-0" />
                   {Object.entries(monthGroups).map(([month, monthWeeks]) => (
                     <div
                       key={month}
                       className="text-center font-semibold text-sm"
-                      style={{ width: `${monthWeeks.length * 48}px` }}
+                      style={{ width: `${monthWeeks.length * 36}px` }}
                     >
                       {month}
                     </div>
@@ -156,10 +156,10 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
 
                 {/* Week numbers */}
                 <div className="flex mb-1">
-                  <div className="w-40 flex-shrink-0" />
+                  <div className="w-32 flex-shrink-0" />
                   {weeks.map(week => (
-                    <div key={week} className="w-12 text-center text-xs text-muted-foreground">
-                      W{week}
+                    <div key={week} className="w-9 text-center text-xs text-muted-foreground">
+                      {week}
                     </div>
                   ))}
                 </div>
@@ -167,10 +167,10 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
                 {/* Region rows */}
                 {regions.map(region => (
                   <div key={region} className="flex items-center mb-1">
-                    <div className="w-40 flex-shrink-0 text-sm font-medium pr-4 truncate">
-                      {region}
+                    <div className="w-32 flex-shrink-0 text-xs font-medium pr-2 truncate" title={region}>
+                      {region.replace(" archipelago", "")}
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-0.5">
                       {weeks.map(week => {
                         const matches = heatmapData[region]?.[week] || [];
                         const matchCount = matches.length;
@@ -180,7 +180,7 @@ export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
                           <Tooltip key={`${region}-${week}`}>
                             <TooltipTrigger asChild>
                               <div
-                                className={`w-11 h-11 rounded border border-border/50 cursor-pointer transition-all hover:scale-110 hover:border-primary hover:shadow-md ${intensityColor}`}
+                                className={`w-8 h-8 rounded border border-border/50 cursor-pointer transition-all hover:scale-110 hover:border-primary hover:shadow-md ${intensityColor}`}
                               />
                             </TooltipTrigger>
                             {matchCount > 0 && (
