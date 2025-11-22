@@ -253,7 +253,13 @@
     "country": "Sweden",
     "tags": ["monitoring", "sensors", "early warning", "remediation"],
     "description": "Early-stage VC focused on blue economy and marine technology startups in the Nordics.",
-    "url": "https://nordicblue.example"
+    "url": "https://nordicblue.example",
+    "investorDetails": {
+      "stageFocus": ["pre-seed", "seed"],
+      "geographyFocus": ["nordics"],
+      "focusTags": ["blue-economy", "water-tech", "climate"],
+      "portfolioTags": ["monitoring", "sensors"]
+    }
   },
   {
     "id": "act_012",
@@ -262,7 +268,13 @@
     "country": "Finland",
     "tags": ["remediation", "nutrient reduction", "biotech", "monitoring"],
     "description": "Impact fund dedicated to Baltic Sea environmental solutions and ecosystem restoration.",
-    "url": "https://balticsea.fund"
+    "url": "https://balticsea.fund",
+    "investorDetails": {
+      "stageFocus": ["seed", "series-a"],
+      "geographyFocus": ["nordics", "europe"],
+      "focusTags": ["blue-economy", "water-tech", "ocean-tech"],
+      "portfolioTags": ["remediation", "nutrient reduction"]
+    }
   },
   {
     "id": "act_013",
@@ -271,7 +283,13 @@
     "country": "Denmark",
     "tags": ["monitoring", "sensors", "data visualization", "decision support"],
     "description": "Growth-stage investor specializing in water technology and aquatic monitoring systems.",
-    "url": "https://aquatech.capital"
+    "url": "https://aquatech.capital",
+    "investorDetails": {
+      "stageFocus": ["series-a", "growth"],
+      "geographyFocus": ["europe", "global"],
+      "focusTags": ["water-tech", "deeptech"],
+      "portfolioTags": ["monitoring", "sensors", "data visualization"]
+    }
   },
   {
     "id": "act_014",
@@ -280,7 +298,13 @@
     "country": "Norway",
     "tags": ["communication", "citizen science", "early warning", "decision support"],
     "description": "Sustainable finance firm investing in marine conservation and community engagement tech.",
-    "url": "https://greenwave.invest"
+    "url": "https://greenwave.invest",
+    "investorDetails": {
+      "stageFocus": ["seed", "series-a"],
+      "geographyFocus": ["nordics", "europe"],
+      "focusTags": ["climate", "water-tech"],
+      "portfolioTags": ["communication", "citizen science"]
+    }
   },
   {
     "id": "act_015",
@@ -289,7 +313,13 @@
     "country": "Netherlands",
     "tags": ["remediation", "biotech", "monitoring", "sensors"],
     "description": "Venture capital fund focused on ocean health and blue biotechnology innovations.",
-    "url": "https://oceaninnovators.vc"
+    "url": "https://oceaninnovators.vc",
+    "investorDetails": {
+      "stageFocus": ["seed", "series-a", "growth"],
+      "geographyFocus": ["europe", "global"],
+      "focusTags": ["blue-economy", "ocean-tech", "deeptech"],
+      "portfolioTags": ["biotech", "monitoring"]
+    }
   },
   {
     "id": "act_016",
@@ -473,7 +503,13 @@
     "country": "Finland",
     "tags": ["sensors", "monitoring", "IoT", "early warning"],
     "description": "Seed and Series A investor in marine IoT and sensor technology companies.",
-    "url": "https://bluehorizon.partners"
+    "url": "https://bluehorizon.partners",
+    "investorDetails": {
+      "stageFocus": ["seed", "series-a"],
+      "geographyFocus": ["nordics", "europe"],
+      "focusTags": ["deeptech", "water-tech"],
+      "portfolioTags": ["sensors", "IoT"]
+    }
   },
   {
     "id": "act_024",
@@ -482,7 +518,13 @@
     "country": "Sweden",
     "tags": ["remediation", "nutrient reduction", "biotech", "community"],
     "description": "Impact-first fund supporting scalable solutions for marine ecosystem health.",
-    "url": "https://ecosea.ventures"
+    "url": "https://ecosea.ventures",
+    "investorDetails": {
+      "stageFocus": ["pre-seed", "seed"],
+      "geographyFocus": ["nordics"],
+      "focusTags": ["blue-economy", "climate"],
+      "portfolioTags": ["remediation", "community"]
+    }
   },
   {
     "id": "act_025",
@@ -491,6 +533,12 @@
     "country": "Estonia",
     "tags": ["communication", "data visualization", "decision support", "citizen science"],
     "description": "Angel network investing in public engagement and transparency tools for water quality.",
-    "url": "https://watertech.angels"
+    "url": "https://watertech.angels",
+    "investorDetails": {
+      "stageFocus": ["pre-seed", "seed"],
+      "geographyFocus": ["nordics", "europe"],
+      "focusTags": ["water-tech", "climate"],
+      "portfolioTags": ["communication", "data visualization"]
+    }
   }
 ]

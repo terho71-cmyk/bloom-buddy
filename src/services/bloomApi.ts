@@ -289,6 +289,15 @@ export class BloomApi {
     return computeProblemFitScore(summary, actor);
   }
 
+  static buildInvestorView(
+    summary: BloomSummary,
+    investor: Actor
+  ): import("@/types/bloom").InvestorViewSummary {
+    const allActors = this.getAllActors();
+    const { buildInvestorViewSummary } = require("@/lib/investorView");
+    return buildInvestorViewSummary(summary, investor, allActors);
+  }
+
   static getAvailableRegions(): string[] {
     if (this.observations.length === 0) return [];
     return Array.from(new Set(this.observations.map(o => o.region))).sort();
@@ -300,6 +309,10 @@ export class BloomApi {
       ? this.observations.filter(o => o.region === region)
       : this.observations;
     return Array.from(new Set(obs.map(o => o.week))).sort((a, b) => b - a);
+  }
+
+  static getWeeksForRegion(region: string): number[] {
+    return this.getAvailableWeeks(region);
   }
 
   static getAllActors(): Actor[] {
