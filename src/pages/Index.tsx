@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { RegionWeekSelector } from "@/components/RegionWeekSelector";
 import { BloomSummaryCard } from "@/components/BloomSummaryCard";
 import { BulletinCard } from "@/components/BulletinCard";
-import { ActorRecommendations } from "@/components/ActorRecommendations";
-import { ClusterCard } from "@/components/ClusterCard";
-import { ClusterDetailDialog } from "@/components/ClusterDetailDialog";
-import { StartupProfileDialog } from "@/components/StartupProfileDialog";
 import { BloomApi } from "@/services/bloomApi";
-import { BloomSummary, BulletinResponse, Recommendation, CollaborationCluster, Actor } from "@/types/bloom";
+import { BloomSummary, BulletinResponse } from "@/types/bloom";
 import { useToast } from "@/hooks/use-toast";
 import { Waves, Building2, Radar, Users } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
@@ -21,12 +17,6 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState<BloomSummary | null>(null);
   const [bulletin, setBulletin] = useState<BulletinResponse | null>(null);
-  const [recommendations, setRecommendations] = useState<Recommendation[] | null>(null);
-  const [clusters, setClusters] = useState<CollaborationCluster[] | null>(null);
-  const [selectedCluster, setSelectedCluster] = useState<CollaborationCluster | null>(null);
-  const [clusterDialogOpen, setClusterDialogOpen] = useState(false);
-  const [selectedStartup, setSelectedStartup] = useState<Actor | null>(null);
-  const [startupDialogOpen, setStartupDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -72,8 +62,6 @@ const Index = () => {
     setLoading(true);
     setSummary(null);
     setBulletin(null);
-    setRecommendations(null);
-    setClusters(null);
 
     try {
       // Get bloom summary
@@ -83,14 +71,6 @@ const Index = () => {
       // Generate bulletin
       const bulletinData = await BloomApi.generateBulletin(summaryData);
       setBulletin(bulletinData);
-
-      // Get recommendations
-      const recsData = await BloomApi.recommendActors(summaryData);
-      setRecommendations(recsData);
-      
-      // Get collaboration clusters
-      const clustersData = await BloomApi.buildCollaborationClusters(summaryData);
-      setClusters(clustersData);
 
       toast({
         title: "Analysis complete",
@@ -107,15 +87,6 @@ const Index = () => {
     }
   };
   
-  const handleViewClusterDetails = (cluster: CollaborationCluster) => {
-    setSelectedCluster(cluster);
-    setClusterDialogOpen(true);
-  };
-  
-  const handleViewStartupFromCluster = (startup: Actor) => {
-    setSelectedStartup(startup);
-    setStartupDialogOpen(true);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-soft">
@@ -205,56 +176,10 @@ const Index = () => {
             )}
 
             {!loading && summary && (
-              <Tabs defaultValue="bulletin" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="bulletin">Bloom Bulletin</TabsTrigger>
-                  <TabsTrigger value="solutions">Solutions & Investors</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="bulletin" className="space-y-6">
-                  <BloomSummaryCard summary={summary} />
-                  {bulletin && <BulletinCard bulletin={bulletin} />}
-                </TabsContent>
-
-                <TabsContent value="solutions">
-                  {recommendations && recommendations.length > 0 && summary ? (
-                    <div className="space-y-8">
-                      <ActorRecommendations recommendations={recommendations} summary={summary} />
-                      
-                      {/* Collaboration Clusters */}
-                      {clusters && clusters.length > 0 && (
-                        <div className="mt-8">
-                          <div className="mb-6">
-                            <div className="flex items-center gap-2 mb-2">
-                              <Users className="h-6 w-6 text-primary" />
-                              <h2 className="text-2xl font-heading font-bold">
-                                Collaboration Clusters
-                              </h2>
-                            </div>
-                            <p className="text-muted-foreground">
-                              Bundles of complementary startups that work together to provide comprehensive solutions
-                            </p>
-                          </div>
-                          
-                          <div className="grid gap-6 md:grid-cols-2">
-                            {clusters.map(cluster => (
-                              <ClusterCard
-                                key={cluster.id}
-                                cluster={cluster}
-                                onViewDetails={handleViewClusterDetails}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground">No recommendations available for this situation.</p>
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
+              <div className="space-y-6">
+                <BloomSummaryCard summary={summary} />
+                {bulletin && <BulletinCard bulletin={bulletin} />}
+              </div>
             )}
           </div>
         </div>
@@ -267,19 +192,6 @@ const Index = () => {
         </div>
       </footer>
       
-      {/* Dialogs */}
-      <ClusterDetailDialog
-        open={clusterDialogOpen}
-        onOpenChange={setClusterDialogOpen}
-        cluster={selectedCluster}
-        onViewStartup={handleViewStartupFromCluster}
-      />
-      
-      <StartupProfileDialog
-        open={startupDialogOpen}
-        onOpenChange={setStartupDialogOpen}
-        startup={selectedStartup}
-      />
     </div>
   );
 };
