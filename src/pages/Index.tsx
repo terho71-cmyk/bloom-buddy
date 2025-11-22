@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { RegionWeekSelector } from "@/components/RegionWeekSelector";
+import { LocationPicker } from "@/components/LocationPicker";
 import { BloomSummaryCard } from "@/components/BloomSummaryCard";
 import { BulletinCard } from "@/components/BulletinCard";
 import { BloomApi } from "@/services/bloomApi";
@@ -8,6 +8,7 @@ import { BloomSummary, BulletinResponse } from "@/types/bloom";
 import { useToast } from "@/hooks/use-toast";
 import { Waves, Building2, Radar, Users } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [regions, setRegions] = useState<string[]>([]);
@@ -139,10 +140,10 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-4 gap-6">
-          {/* Sidebar */}
-          <aside className="lg:col-span-1">
-            <RegionWeekSelector
+        <div className="space-y-8">
+          {/* Location Picker */}
+          {!summary && (
+            <LocationPicker
               regions={regions}
               weeks={weeks}
               selectedRegion={selectedRegion}
@@ -152,36 +153,41 @@ const Index = () => {
               onAnalyze={handleAnalyze}
               loading={loading}
             />
-          </aside>
+          )}
 
-          {/* Main Content Area */}
-          <div className="lg:col-span-3">
-            {loading && (
-              <div className="flex items-center justify-center py-12">
-                <div className="text-center">
-                  <Waves className="h-12 w-12 text-primary animate-pulse mx-auto mb-4" />
-                  <p className="text-lg text-muted-foreground">Analyzing bloom situation...</p>
+          {/* Loading State */}
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <Waves className="h-12 w-12 text-primary animate-pulse mx-auto mb-4" />
+                <p className="text-lg text-muted-foreground">Analyzing bloom situation...</p>
+              </div>
+            </div>
+          )}
+
+          {/* Results */}
+          {!loading && summary && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h2 className="text-2xl font-heading font-bold">
+                    {selectedRegion} - Week {selectedWeek}
+                  </h2>
                 </div>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSummary(null);
+                    setBulletin(null);
+                  }}
+                >
+                  New Analysis
+                </Button>
               </div>
-            )}
-
-            {!loading && !summary && (
-              <div className="text-center py-12">
-                <Waves className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <h2 className="text-2xl font-heading font-semibold mb-2">Select Region & Week</h2>
-                <p className="text-muted-foreground">
-                  Choose a region and week from the sidebar, then click "Generate Analysis" to view the cyanobacteria situation and recommendations.
-                </p>
-              </div>
-            )}
-
-            {!loading && summary && (
-              <div className="space-y-6">
-                <BloomSummaryCard summary={summary} />
-                {bulletin && <BulletinCard bulletin={bulletin} />}
-              </div>
-            )}
-          </div>
+              <BloomSummaryCard summary={summary} />
+              {bulletin && <BulletinCard bulletin={bulletin} />}
+            </div>
+          )}
         </div>
       </main>
 
