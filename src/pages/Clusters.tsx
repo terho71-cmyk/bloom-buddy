@@ -108,7 +108,7 @@ export default function Clusters() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <NavLink to="/" className="text-2xl font-heading font-bold text-primary hover:text-primary/80">
-              BlueBloom Hub
+              BlueBloom
             </NavLink>
             <NavLink to="/" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
@@ -260,7 +260,7 @@ export default function Clusters() {
       {/* Footer */}
       <footer className="border-t mt-16 py-6 bg-card">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>BlueBloom Hub • Powered by Apelago • Mock data for demonstration</p>
+          <p>BlueBloom • Powered by Apelago • Mock data for demonstration</p>
         </div>
       </footer>
 
