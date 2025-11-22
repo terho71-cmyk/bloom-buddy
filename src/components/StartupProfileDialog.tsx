@@ -1,4 +1,4 @@
-import { Actor, ProblemFitScore } from "@/types/bloom";
+import { Actor, ProblemFitScore, StartupCaseStudy } from "@/types/bloom";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,9 @@ import { ImpactSandbox } from "./ImpactSandbox";
 import { AlertRulesSection } from "./AlertRulesSection";
 import { PerfectWeekDetector } from "./PerfectWeekDetector";
 import { PerfectWeeksHeatmap } from "./PerfectWeeksHeatmap";
+import { CaseStudyBuilder } from "./CaseStudyBuilder";
+import { CaseStudyDisplay } from "./CaseStudyDisplay";
+import { CaseStudyList } from "./CaseStudyList";
 
 interface StartupProfileDialogProps {
   open: boolean;
@@ -59,6 +62,8 @@ export function StartupProfileDialog({
   const [fitScore, setFitScore] = useState<ProblemFitScore | null>(null);
   const [loadingFit, setLoadingFit] = useState(false);
   const [fitPickerDialogOpen, setFitPickerDialogOpen] = useState(false);
+  const [generatedCaseStudy, setGeneratedCaseStudy] = useState<StartupCaseStudy | null>(null);
+  const [selectedCaseStudy, setSelectedCaseStudy] = useState<StartupCaseStudy | null>(null);
 
   // Auto-compute fit if region and week are provided
   useEffect(() => {
@@ -379,6 +384,56 @@ Website: ${startup.url}
                 <AlertRulesSection startup={startup} />
                 <PerfectWeeksHeatmap startupId={startup.id} />
                 <PerfectWeekDetector startup={startup} />
+              </div>
+
+              {/* Startup Stories Section */}
+              <div className="pt-6 border-t space-y-6">
+                <h2 className="text-xl font-heading font-semibold">Startup Stories</h2>
+                <p className="text-sm text-muted-foreground">
+                  Create shareable case studies from your pilots and deployments
+                </p>
+                
+                {!generatedCaseStudy && !selectedCaseStudy && (
+                  <>
+                    <CaseStudyBuilder
+                      startup={startup}
+                      region={region}
+                      week={week}
+                      onGenerated={(cs) => {
+                        setGeneratedCaseStudy(cs);
+                        setSelectedCaseStudy(null);
+                      }}
+                    />
+                    <CaseStudyList
+                      startupId={startup.id}
+                      onSelect={(cs) => {
+                        setSelectedCaseStudy(cs);
+                        setGeneratedCaseStudy(null);
+                      }}
+                    />
+                  </>
+                )}
+
+                {(generatedCaseStudy || selectedCaseStudy) && (
+                  <div className="space-y-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setGeneratedCaseStudy(null);
+                        setSelectedCaseStudy(null);
+                      }}
+                    >
+                      ← Back to Stories
+                    </Button>
+                    <CaseStudyDisplay
+                      caseStudy={generatedCaseStudy || selectedCaseStudy!}
+                      onSaved={() => {
+                        setGeneratedCaseStudy(null);
+                        setSelectedCaseStudy(null);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Footer note */}

@@ -1,14 +1,16 @@
-import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet, ProblemFitScore, StartupAlertRule, PerfectWeekOverview } from "@/types/bloom";
+import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet, ProblemFitScore, StartupAlertRule, PerfectWeekOverview, CaseStudyInput, StartupCaseStudy } from "@/types/bloom";
 import { buildPitchSnippet } from "@/lib/pitch";
 import { computeProblemFitScore } from "@/lib/fitScore";
 import { buildInvestorViewSummary } from "@/lib/investorView";
 import { findPerfectWeeksForStartup } from "@/lib/alerts";
+import { buildCaseStudyFromInput } from "@/lib/caseStudies";
 
 // Mock API layer - can be replaced with real API calls later
 export class BloomApi {
   private static observations: BloomObservation[] = [];
   private static actors: Actor[] = [];
   private static startupAlerts: Record<string, StartupAlertRule[]> = {};
+  private static caseStudies: StartupCaseStudy[] = [];
 
   static async loadData() {
     // Load observations
@@ -26,6 +28,15 @@ export class BloomApi {
     } catch (error) {
       console.warn('No startup alerts data found, using empty alerts');
       this.startupAlerts = {};
+    }
+    
+    // Load case studies
+    try {
+      const caseStudiesResponse = await fetch('/data/caseStudies.json');
+      this.caseStudies = await caseStudiesResponse.json();
+    } catch (error) {
+      console.warn('No case studies data found, using empty array');
+      this.caseStudies = [];
     }
   }
 
@@ -485,5 +496,46 @@ export class BloomApi {
     selected.push(...shuffled(investors).slice(0, investorsNeeded));
 
     return selected.slice(0, count);
+  }
+  
+  // Case Study methods
+  static async generateCaseStudy(
+    input: CaseStudyInput,
+    startup: Actor,
+    summary?: BloomSummary
+  ): Promise<StartupCaseStudy> {
+    if (this.observations.length === 0) await this.loadData();
+    
+    const caseStudy = buildCaseStudyFromInput(input, startup, summary);
+    return caseStudy;
+  }
+  
+  static async saveCaseStudy(caseStudy: StartupCaseStudy): Promise<boolean> {
+    if (this.observations.length === 0) await this.loadData();
+    
+    // Check if case study with same ID exists
+    const existingIndex = this.caseStudies.findIndex(cs => cs.id === caseStudy.id);
+    
+    if (existingIndex >= 0) {
+      // Update existing
+      this.caseStudies[existingIndex] = caseStudy;
+    } else {
+      // Add new
+      this.caseStudies.push(caseStudy);
+    }
+    
+    return true;
+  }
+  
+  static async getStartupCaseStudies(startupId: string): Promise<StartupCaseStudy[]> {
+    if (this.observations.length === 0) await this.loadData();
+    
+    return this.caseStudies.filter(cs => cs.startupId === startupId);
+  }
+  
+  static async getAllCaseStudies(): Promise<StartupCaseStudy[]> {
+    if (this.observations.length === 0) await this.loadData();
+    
+    return this.caseStudies;
   }
 }
