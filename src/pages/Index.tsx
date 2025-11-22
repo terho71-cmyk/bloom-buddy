@@ -7,9 +7,11 @@ import { ActorRecommendations } from "@/components/ActorRecommendations";
 import { ClusterCard } from "@/components/ClusterCard";
 import { ClusterDetailDialog } from "@/components/ClusterDetailDialog";
 import { StartupProfileDialog } from "@/components/StartupProfileDialog";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import { BloomApi } from "@/services/bloomApi";
 import { BloomSummary, BulletinResponse, Recommendation, CollaborationCluster, Actor } from "@/types/bloom";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Waves, Building2, Radar, Users } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
@@ -28,6 +30,7 @@ const Index = () => {
   const [selectedStartup, setSelectedStartup] = useState<Actor | null>(null);
   const [startupDialogOpen, setStartupDialogOpen] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     initializeData();
@@ -93,13 +96,13 @@ const Index = () => {
       setClusters(clustersData);
 
       toast({
-        title: "Analysis complete",
-        description: "Bloom situation analysis and recommendations generated successfully."
+        title: t("analysis.complete"),
+        description: t("analysis.complete.desc")
       });
     } catch (error) {
       toast({
-        title: "Analysis failed",
-        description: "Failed to generate analysis. Please try again.",
+        title: t("analysis.failed"),
+        description: t("analysis.failed.desc"),
         variant: "destructive"
       });
     } finally {
@@ -126,41 +129,44 @@ const Index = () => {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <Waves className="h-8 w-8" />
-                <h1 className="text-4xl font-heading font-bold">BlueBloom</h1>
+                <h1 className="text-4xl font-heading font-bold">{t("app.name")}</h1>
               </div>
               <p className="text-lg opacity-90">
-                Cyanobacteria situation & blue-economy solution finder for Apelago
+                {t("app.tagline")}
               </p>
             </div>
-            <div className="flex gap-2">
-              <NavLink 
-                to="/startups" 
-                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
-              >
-                <Building2 className="h-5 w-5" />
-                <span>Startups</span>
-              </NavLink>
-              <NavLink 
-                to="/investors" 
-                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
-              >
-                <Building2 className="h-5 w-5" />
-                <span>Investors</span>
-              </NavLink>
-              <NavLink 
-                to="/solution-gaps" 
-                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
-              >
-                <Radar className="h-5 w-5" />
-                <span>Gaps</span>
-              </NavLink>
-              <NavLink 
-                to="/clusters" 
-                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
-              >
-                <Users className="h-5 w-5" />
-                <span>Clusters</span>
-              </NavLink>
+            <div className="flex items-center gap-4">
+              <div className="flex gap-2">
+                <NavLink 
+                  to="/startups" 
+                  className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
+                >
+                  <Building2 className="h-5 w-5" />
+                  <span>{t("nav.startups")}</span>
+                </NavLink>
+                <NavLink 
+                  to="/investors" 
+                  className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
+                >
+                  <Building2 className="h-5 w-5" />
+                  <span>{t("nav.investors")}</span>
+                </NavLink>
+                <NavLink 
+                  to="/solution-gaps" 
+                  className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
+                >
+                  <Radar className="h-5 w-5" />
+                  <span>{t("nav.gaps")}</span>
+                </NavLink>
+                <NavLink 
+                  to="/clusters" 
+                  className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
+                >
+                  <Users className="h-5 w-5" />
+                  <span>{t("nav.clusters")}</span>
+                </NavLink>
+              </div>
+              <LanguageSelector />
             </div>
           </div>
         </div>
@@ -189,7 +195,7 @@ const Index = () => {
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                   <Waves className="h-12 w-12 text-primary animate-pulse mx-auto mb-4" />
-                  <p className="text-lg text-muted-foreground">Analyzing bloom situation...</p>
+                  <p className="text-lg text-muted-foreground">{t("analysis.loading")}</p>
                 </div>
               </div>
             )}
@@ -197,9 +203,9 @@ const Index = () => {
             {!loading && !summary && (
               <div className="text-center py-12">
                 <Waves className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <h2 className="text-2xl font-heading font-semibold mb-2">Select Region & Week</h2>
+                <h2 className="text-2xl font-heading font-semibold mb-2">{t("analysis.title")}</h2>
                 <p className="text-muted-foreground">
-                  Choose a region and week from the sidebar, then click "Generate Analysis" to view the cyanobacteria situation and recommendations.
+                  {t("analysis.description")}
                 </p>
               </div>
             )}
@@ -207,8 +213,8 @@ const Index = () => {
             {!loading && summary && (
               <Tabs defaultValue="bulletin" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="bulletin">Bloom Bulletin</TabsTrigger>
-                  <TabsTrigger value="solutions">Solutions & Investors</TabsTrigger>
+                  <TabsTrigger value="bulletin">{t("tab.bulletin")}</TabsTrigger>
+                  <TabsTrigger value="solutions">{t("tab.solutions")}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="bulletin" className="space-y-6">
@@ -228,11 +234,11 @@ const Index = () => {
                             <div className="flex items-center gap-2 mb-2">
                               <Users className="h-6 w-6 text-primary" />
                               <h2 className="text-2xl font-heading font-bold">
-                                Collaboration Clusters
+                                {t("clusters.title")}
                               </h2>
                             </div>
                             <p className="text-muted-foreground">
-                              Bundles of complementary startups that work together to provide comprehensive solutions
+                              {t("clusters.description")}
                             </p>
                           </div>
                           
@@ -250,7 +256,7 @@ const Index = () => {
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <p className="text-muted-foreground">No recommendations available for this situation.</p>
+                      <p className="text-muted-foreground">{t("clusters.no.recommendations")}</p>
                     </div>
                   )}
                 </TabsContent>
@@ -263,7 +269,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t mt-16 py-6 bg-card">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>BlueBloom • Powered by Apelago • Mock data for demonstration</p>
+          <p>{t("footer.text")}</p>
         </div>
       </footer>
       

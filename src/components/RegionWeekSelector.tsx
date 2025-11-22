@@ -1,6 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface RegionWeekSelectorProps {
   regions: string[];
@@ -23,13 +24,15 @@ export function RegionWeekSelector({
   onAnalyze,
   loading
 }: RegionWeekSelectorProps) {
+  const { t } = useLanguage();
+  
   return (
     <Card className="p-6 space-y-4">
       <div className="space-y-2">
-        <label className="text-sm font-medium">Region</label>
+        <label className="text-sm font-medium">{t("selector.region")}</label>
         <Select value={selectedRegion} onValueChange={onRegionChange}>
           <SelectTrigger>
-            <SelectValue placeholder="Select region" />
+            <SelectValue placeholder={t("selector.region")} />
           </SelectTrigger>
           <SelectContent className="bg-card z-50">
             {regions.map(region => (
@@ -40,14 +43,14 @@ export function RegionWeekSelector({
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">Week</label>
+        <label className="text-sm font-medium">{t("selector.week")}</label>
         <Select value={selectedWeek.toString()} onValueChange={(v) => onWeekChange(Number(v))}>
           <SelectTrigger>
-            <SelectValue placeholder="Select week" />
+            <SelectValue placeholder={t("selector.week")} />
           </SelectTrigger>
           <SelectContent className="bg-card z-50">
             {weeks.map(week => (
-              <SelectItem key={week} value={week.toString()}>Week {week}</SelectItem>
+              <SelectItem key={week} value={week.toString()}>{t("selector.week")} {week}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -58,7 +61,7 @@ export function RegionWeekSelector({
         disabled={loading || !selectedRegion || !selectedWeek}
         className="w-full"
       >
-        {loading ? "Analyzing..." : "Generate Analysis"}
+        {loading ? t("selector.analyzing") : t("selector.analyze")}
       </Button>
     </Card>
   );
