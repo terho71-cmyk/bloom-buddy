@@ -1,0 +1,65 @@
+{
+  "act_001": [
+    {
+      "id": "alert_001_1",
+      "name": "High-risk coastal weeks",
+      "description": "Perfect timing for monitoring system pilots in high-risk coastal areas",
+      "useCase": "pilot",
+      "conditions": {
+        "minOverallRisk": "high",
+        "minHighSeverityHotspots": 2,
+        "requireTouristAreasHint": true
+      },
+      "isActive": true
+    },
+    {
+      "id": "alert_001_2",
+      "name": "Rising bloom concerns",
+      "description": "Ideal for sales outreach when municipalities see increasing risk trends",
+      "useCase": "sales",
+      "conditions": {
+        "minOverallRisk": "medium",
+        "requireIncreasingTrend": true
+      },
+      "isActive": true
+    }
+  ],
+  "act_003": [
+    {
+      "id": "alert_003_1",
+      "name": "Persistent high-risk situations",
+      "description": "Best conditions for demonstrating remediation technology value",
+      "useCase": "pilot",
+      "conditions": {
+        "minOverallRisk": "high",
+        "minHighSeverityHotspots": 3
+      },
+      "isActive": true
+    }
+  ],
+  "act_005": [
+    {
+      "id": "alert_005_1",
+      "name": "Tourist area communication needs",
+      "description": "Peak opportunity for citizen alert app demos",
+      "useCase": "sales",
+      "conditions": {
+        "minOverallRisk": "medium",
+        "requireTouristAreasHint": true
+      },
+      "isActive": true
+    },
+    {
+      "id": "alert_005_2",
+      "name": "Investor pitch moments",
+      "description": "High-visibility weeks for showcasing market need to investors",
+      "useCase": "investor",
+      "conditions": {
+        "minOverallRisk": "high",
+        "minHighSeverityHotspots": 2,
+        "requireIncreasingTrend": true
+      },
+      "isActive": true
+    }
+  ]
+}

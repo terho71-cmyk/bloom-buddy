@@ -16,6 +16,8 @@ import { PitchSnippet } from "@/types/bloom";
 import { PitchSnippetDialog } from "./PitchSnippetDialog";
 import { RegionWeekPickerDialog } from "./RegionWeekPickerDialog";
 import { ImpactSandbox } from "./ImpactSandbox";
+import { AlertRulesSection } from "./AlertRulesSection";
+import { PerfectWeekDetector } from "./PerfectWeekDetector";
 
 interface StartupProfileDialogProps {
   open: boolean;
@@ -370,6 +372,12 @@ Website: ${startup.url}
                 week={week}
                 onNeedRegionWeek={() => setFitPickerDialogOpen(true)}
               />
+
+              {/* Alert Rules & Perfect Week Detector */}
+              <div className="pt-6 border-t space-y-6">
+                <AlertRulesSection startup={startup} />
+                <PerfectWeekDetector startup={startup} />
+              </div>
 
               {/* Footer note */}
               <div className="pt-4 border-t space-y-3">

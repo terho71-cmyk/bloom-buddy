@@ -148,6 +148,39 @@ export interface InvestorViewSummary {
   underServedThemes: UnderServedTheme[];
 }
 
+export type AlertUseCase = "pilot" | "sales" | "investor";
+
+export interface StartupAlertConditions {
+  minOverallRisk?: Severity;             // e.g. at least "medium"
+  maxOverallRisk?: Severity;             // optional upper bound
+  minHighSeverityHotspots?: number;      // e.g. ≥ 3 high severity hotspots
+  requireIncreasingTrend?: boolean;      // at least one hotspot with trend === "increasing"
+  requireTouristAreasHint?: boolean;     // use areaName heuristics
+}
+
+export interface StartupAlertRule {
+  id: string;
+  name: string;
+  description: string;
+  useCase: AlertUseCase;
+  conditions: StartupAlertConditions;
+  isActive: boolean;
+}
+
+export interface PerfectWeekMatch {
+  region: string;
+  week: number;
+  ruleId: string;
+  ruleName: string;
+  reason: string;
+}
+
+export interface PerfectWeekOverview {
+  startupId: string;
+  region: string;
+  matches: PerfectWeekMatch[];
+}
+
 export interface BulletinResponse {
   citizenBulletin: string;
   expertNote: string;

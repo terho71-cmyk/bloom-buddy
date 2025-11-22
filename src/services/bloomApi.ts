@@ -1,12 +1,14 @@
-import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet, ProblemFitScore } from "@/types/bloom";
+import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet, ProblemFitScore, StartupAlertRule, PerfectWeekOverview } from "@/types/bloom";
 import { buildPitchSnippet } from "@/lib/pitch";
 import { computeProblemFitScore } from "@/lib/fitScore";
 import { buildInvestorViewSummary } from "@/lib/investorView";
+import { findPerfectWeeksForStartup } from "@/lib/alerts";
 
 // Mock API layer - can be replaced with real API calls later
 export class BloomApi {
   private static observations: BloomObservation[] = [];
   private static actors: Actor[] = [];
+  private static startupAlerts: Record<string, StartupAlertRule[]> = {};
 
   static async loadData() {
     // Load observations
@@ -16,6 +18,15 @@ export class BloomApi {
     // Load actors
     const actorsResponse = await fetch('/data/actors.json');
     this.actors = await actorsResponse.json();
+    
+    // Load startup alerts
+    try {
+      const alertsResponse = await fetch('/data/startupAlerts.json');
+      this.startupAlerts = await alertsResponse.json();
+    } catch (error) {
+      console.warn('No startup alerts data found, using empty alerts');
+      this.startupAlerts = {};
+    }
   }
 
   static async getBloomSummary(region: string, week: number): Promise<BloomSummary> {
@@ -317,6 +328,32 @@ export class BloomApi {
 
   static getAllActors(): Actor[] {
     return this.actors;
+  }
+
+  static getStartupAlerts(startupId: string): StartupAlertRule[] {
+    return this.startupAlerts[startupId] || [];
+  }
+
+  static async findPerfectWeeks(
+    startupId: string,
+    region: string,
+    weeks: number[]
+  ): Promise<PerfectWeekOverview> {
+    if (this.observations.length === 0) await this.loadData();
+    
+    const rules = this.getStartupAlerts(startupId);
+    const summaries: BloomSummary[] = [];
+    
+    for (const week of weeks) {
+      try {
+        const summary = await this.getBloomSummary(region, week);
+        summaries.push(summary);
+      } catch (error) {
+        console.warn(`Could not get summary for ${region} week ${week}`);
+      }
+    }
+    
+    return findPerfectWeeksForStartup(summaries, rules, startupId, region);
   }
 
   // Helper methods
