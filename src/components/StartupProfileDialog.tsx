@@ -57,10 +57,6 @@ export function StartupProfileDialog({
   const [loadingFit, setLoadingFit] = useState(false);
   const [fitPickerDialogOpen, setFitPickerDialogOpen] = useState(false);
 
-  if (!startup) return null;
-
-  const details = startup.startupDetails;
-
   // Auto-compute fit if region and week are provided
   useEffect(() => {
     if (region && week && open && startup) {
@@ -69,6 +65,11 @@ export function StartupProfileDialog({
       setFitScore(null);
     }
   }, [region, week, open, startup?.id]);
+
+  // Early return after all hooks
+  if (!startup) return null;
+
+  const details = startup.startupDetails;
 
   const computeFitForContext = async (selectedRegion: string, selectedWeek: number) => {
     setLoadingFit(true);
