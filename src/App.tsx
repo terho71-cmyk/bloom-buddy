@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Startups from "./pages/Startups";
 import Investors from "./pages/Investors";
 import SolutionGaps from "./pages/SolutionGaps";
+import Clusters from "./pages/Clusters";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/startups" element={<Startups />} />
           <Route path="/investors" element={<Investors />} />
           <Route path="/solution-gaps" element={<SolutionGaps />} />
+          <Route path="/clusters" element={<Clusters />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
