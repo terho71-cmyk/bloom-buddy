@@ -18,6 +18,7 @@ import { RegionWeekPickerDialog } from "./RegionWeekPickerDialog";
 import { ImpactSandbox } from "./ImpactSandbox";
 import { AlertRulesSection } from "./AlertRulesSection";
 import { PerfectWeekDetector } from "./PerfectWeekDetector";
+import { PerfectWeeksHeatmap } from "./PerfectWeeksHeatmap";
 
 interface StartupProfileDialogProps {
   open: boolean;
@@ -376,6 +377,7 @@ Website: ${startup.url}
               {/* Alert Rules & Perfect Week Detector */}
               <div className="pt-6 border-t space-y-6">
                 <AlertRulesSection startup={startup} />
+                <PerfectWeeksHeatmap startupId={startup.id} />
                 <PerfectWeekDetector startup={startup} />
               </div>
 

@@ -1,0 +1,229 @@
+import { useState, useMemo, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { BloomApi } from "@/services/bloomApi";
+import { PerfectWeekMatch } from "@/types/bloom";
+import { Calendar, TrendingUp } from "lucide-react";
+
+interface PerfectWeeksHeatmapProps {
+  startupId: string;
+}
+
+export function PerfectWeeksHeatmap({ startupId }: PerfectWeeksHeatmapProps) {
+  const [heatmapData, setHeatmapData] = useState<Record<string, Record<number, PerfectWeekMatch[]>>>({});
+  const [loading, setLoading] = useState(true);
+  
+  const regions = ["Turku archipelago", "Helsinki archipelago", "Vaasa archipelago"];
+  const weeks = Array.from({ length: 14 }, (_, i) => 17 + i); // weeks 17-30
+  
+  // Calculate perfect weeks for all regions
+  useEffect(() => {
+    const loadHeatmapData = async () => {
+      setLoading(true);
+      const data: Record<string, Record<number, PerfectWeekMatch[]>> = {};
+      
+      for (const region of regions) {
+        data[region] = {};
+        const result = await BloomApi.findPerfectWeeks(startupId, region, weeks);
+        
+        result.matches.forEach(match => {
+          if (!data[region][match.week]) {
+            data[region][match.week] = [];
+          }
+          data[region][match.week].push(match);
+        });
+      }
+      
+      setHeatmapData(data);
+      setLoading(false);
+    };
+    
+    loadHeatmapData();
+  }, [startupId]);
+
+  // Group weeks by month
+  const getMonthFromWeek = (week: number) => {
+    // Approximate: weeks 17-21 = May, 22-26 = June, 27-30 = July
+    if (week <= 21) return "May";
+    if (week <= 26) return "June";
+    return "July";
+  };
+
+  const monthGroups = useMemo(() => {
+    const groups: Record<string, number[]> = {};
+    weeks.forEach(week => {
+      const month = getMonthFromWeek(week);
+      if (!groups[month]) groups[month] = [];
+      groups[month].push(week);
+    });
+    return groups;
+  }, [weeks]);
+
+  const getIntensityColor = (matchCount: number) => {
+    if (matchCount === 0) return "bg-muted/30";
+    if (matchCount === 1) return "bg-primary/30";
+    if (matchCount === 2) return "bg-primary/60";
+    return "bg-primary";
+  };
+
+  const totalPerfectWeeks = useMemo(() => {
+    let total = 0;
+    Object.values(heatmapData).forEach(regionData => {
+      total += Object.keys(regionData).length;
+    });
+    return total;
+  }, [heatmapData]);
+
+  if (loading) {
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary" />
+            Perfect Weeks Overview
+          </CardTitle>
+          <CardDescription>Loading heatmap data...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-pulse text-muted-foreground">Analyzing weeks...</div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary" />
+            <CardTitle>Perfect Weeks Overview</CardTitle>
+          </div>
+          <Badge variant="secondary" className="gap-1">
+            <TrendingUp className="h-3 w-3" />
+            {totalPerfectWeeks} Perfect Weeks
+          </Badge>
+        </div>
+        <CardDescription>
+          Heatmap showing ideal weeks for outreach across all regions
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {/* Legend */}
+          <div className="flex items-center gap-4 text-sm">
+            <span className="text-muted-foreground">Match intensity:</span>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-4 rounded bg-muted/30 border" />
+                <span className="text-xs text-muted-foreground">None</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-4 rounded bg-primary/30 border" />
+                <span className="text-xs text-muted-foreground">1 rule</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-4 rounded bg-primary/60 border" />
+                <span className="text-xs text-muted-foreground">2 rules</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-4 rounded bg-primary border" />
+                <span className="text-xs text-muted-foreground">3+ rules</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Heatmap Grid */}
+          <div className="overflow-x-auto">
+            <TooltipProvider>
+              <div className="inline-block min-w-full">
+                {/* Month headers */}
+                <div className="flex mb-2">
+                  <div className="w-40 flex-shrink-0" />
+                  {Object.entries(monthGroups).map(([month, monthWeeks]) => (
+                    <div
+                      key={month}
+                      className="text-center font-semibold text-sm"
+                      style={{ width: `${monthWeeks.length * 48}px` }}
+                    >
+                      {month}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Week numbers */}
+                <div className="flex mb-1">
+                  <div className="w-40 flex-shrink-0" />
+                  {weeks.map(week => (
+                    <div key={week} className="w-12 text-center text-xs text-muted-foreground">
+                      W{week}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Region rows */}
+                {regions.map(region => (
+                  <div key={region} className="flex items-center mb-1">
+                    <div className="w-40 flex-shrink-0 text-sm font-medium pr-4 truncate">
+                      {region}
+                    </div>
+                    <div className="flex gap-1">
+                      {weeks.map(week => {
+                        const matches = heatmapData[region]?.[week] || [];
+                        const matchCount = matches.length;
+                        const intensityColor = getIntensityColor(matchCount);
+
+                        return (
+                          <Tooltip key={`${region}-${week}`}>
+                            <TooltipTrigger asChild>
+                              <div
+                                className={`w-11 h-11 rounded border border-border/50 cursor-pointer transition-all hover:scale-110 hover:border-primary hover:shadow-md ${intensityColor}`}
+                              />
+                            </TooltipTrigger>
+                            {matchCount > 0 && (
+                              <TooltipContent side="top" className="max-w-xs">
+                                <div className="space-y-2">
+                                  <div className="font-semibold">
+                                    {region} - Week {week}
+                                  </div>
+                                  <div className="text-xs space-y-1">
+                                    {matches.map((match, idx) => (
+                                      <div key={idx} className="border-l-2 border-primary pl-2">
+                                        <div className="font-medium">{match.ruleName}</div>
+                                        <div className="text-muted-foreground">{match.reason}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </TooltipContent>
+                            )}
+                          </Tooltip>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TooltipProvider>
+          </div>
+
+          {/* Summary stats */}
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+            {regions.map(region => {
+              const perfectWeeksCount = Object.keys(heatmapData[region] || {}).length;
+              return (
+                <div key={region} className="text-center">
+                  <div className="text-2xl font-bold text-primary">{perfectWeeksCount}</div>
+                  <div className="text-xs text-muted-foreground">{region}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
