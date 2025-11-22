@@ -154,6 +154,13 @@ const Index = () => {
                 <Radar className="h-5 w-5" />
                 <span>Gaps</span>
               </NavLink>
+              <NavLink 
+                to="/clusters" 
+                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
+              >
+                <Users className="h-5 w-5" />
+                <span>Clusters</span>
+              </NavLink>
             </div>
           </div>
         </div>

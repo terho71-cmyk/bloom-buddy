@@ -72,6 +72,7 @@ export default function SolutionGaps() {
                 <NavLink to="/startups">Startups</NavLink>
                 <NavLink to="/investors">Investors</NavLink>
                 <NavLink to="/solution-gaps">Gaps</NavLink>
+                <NavLink to="/clusters">Clusters</NavLink>
               </nav>
             </div>
           </div>
