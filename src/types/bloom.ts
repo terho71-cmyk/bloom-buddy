@@ -246,6 +246,29 @@ export interface SolutionGap {
   drivers: string[];
 }
 
+export type ClusterThemeId =
+  | "early_warning_pack"
+  | "tourism_safety_pack"
+  | "nutrient_management_pack"
+  | "citizen_comms_pack"
+  | "planning_and_policy_pack";
+
+export interface ClusterTheme {
+  id: ClusterThemeId;
+  title: string;
+  description: string;
+  desiredTags: string[];
+}
+
+export interface CollaborationCluster {
+  id: string;
+  theme: ClusterTheme;
+  startups: Actor[];
+  summary: string;
+  benefits: string[];
+  suitabilityNote: string;
+}
+
 export interface BulletinResponse {
   citizenBulletin: string;
   expertNote: string;
