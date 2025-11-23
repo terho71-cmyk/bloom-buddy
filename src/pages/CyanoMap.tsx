@@ -6,14 +6,22 @@ import { Card } from "@/components/ui/card";
 import { RefreshCw, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { COMPANIES } from "@/data/companies";
+import { BloomApi } from "@/services/bloomApi";
 
-interface CyanoLocation {
-  id: string;
+interface Beach {
   name: string;
+  region: string;
   lat: number;
   lon: number;
-  status: "detected" | "suspected" | "clear";
-  timestamp: string;
+}
+
+interface BeachMarker {
+  name: string;
+  region: string;
+  lat: number;
+  lon: number;
+  status: "detected" | "suspected" | "clear" | "unknown";
+  timestamp?: string;
   severity?: string;
   description?: string;
 }
@@ -21,20 +29,60 @@ interface CyanoLocation {
 const CyanoMap = () => {
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const [locations, setLocations] = useState<CyanoLocation[]>([]);
+  const [beachMarkers, setBeachMarkers] = useState<BeachMarker[]>([]);
   const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const navigate = useNavigate();
 
-  const fetchCyanoData = async () => {
+  const fetchLocalData = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/cyano");
-      const data = await response.json();
-      setLocations(data);
+      // Load Finnish beaches from local JSON
+      const beachesResponse = await fetch('/data/finnish_beaches.json');
+      const beaches: Beach[] = await beachesResponse.json();
+
+      // Load bloom observations from local JSON via BloomApi
+      await BloomApi.loadData();
+      const observations = BloomApi.getAllObservations();
+
+      // Match beaches with observations to determine status
+      const markers: BeachMarker[] = beaches.map(beach => {
+        // Find the latest observation for this beach area
+        const beachObs = observations
+          .filter(obs => obs.areaName === beach.name)
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        if (beachObs.length === 0) {
+          return {
+            ...beach,
+            status: "unknown" as const,
+          };
+        }
+
+        const latestObs = beachObs[0];
+        let status: "clear" | "suspected" | "detected" | "unknown" = "unknown";
+
+        if (latestObs.severity === "high") {
+          status = "detected";
+        } else if (latestObs.severity === "medium") {
+          status = "suspected";
+        } else if (latestObs.severity === "low" || latestObs.severity === "none") {
+          status = "clear";
+        }
+
+        return {
+          ...beach,
+          status,
+          severity: latestObs.severity,
+          timestamp: latestObs.date,
+          description: `Week ${latestObs.week} observation`,
+        };
+      });
+
+      setBeachMarkers(markers);
       setLastUpdated(new Date());
     } catch (error) {
-      console.error("Error fetching cyano data:", error);
+      console.error("Error loading local data:", error);
     } finally {
       setLoading(false);
     }
@@ -64,11 +112,11 @@ const CyanoMap = () => {
     }).addTo(mapRef.current);
 
     // Fetch initial data
-    fetchCyanoData();
+    fetchLocalData();
 
     // Set up auto-refresh every 60 seconds
     const refreshInterval = setInterval(() => {
-      fetchCyanoData();
+      fetchLocalData();
     }, 60000);
 
     // Cleanup
@@ -91,17 +139,19 @@ const CyanoMap = () => {
       }
     });
 
-    // Add markers for each location
-    locations.forEach((location) => {
+    // Add beach markers
+    beachMarkers.forEach((beach) => {
       const color =
-        location.status === "detected"
+        beach.status === "detected"
           ? "#ef4444"
-          : location.status === "suspected"
+          : beach.status === "suspected"
           ? "#eab308"
-          : "#22c55e";
+          : beach.status === "clear"
+          ? "#22c55e"
+          : "#9ca3af"; // grey for unknown
 
-      const marker = L.circleMarker([location.lat, location.lon], {
-        radius: 10,
+      const marker = L.circleMarker([beach.lat, beach.lon], {
+        radius: 8,
         fillColor: color,
         color: "#fff",
         weight: 2,
@@ -109,33 +159,42 @@ const CyanoMap = () => {
         fillOpacity: 0.8,
       }).addTo(mapRef.current!);
 
-      const formattedTime = new Date(location.timestamp).toLocaleString("en-FI", {
-        dateStyle: "medium",
-        timeStyle: "short",
-      });
-
       const statusText =
-        location.status === "detected"
-          ? "Algae Detected"
-          : location.status === "suspected"
-          ? "Suspected"
-          : "Clear";
+        beach.status === "detected"
+          ? "Bloom Detected"
+          : beach.status === "suspected"
+          ? "Suspected Bloom"
+          : beach.status === "clear"
+          ? "Clear / Safe"
+          : "Data Not Available";
 
-      // Build popup content with all available data
+      // Build popup content
       let popupContent = `
         <div style="font-family: system-ui, -apple-system, sans-serif; min-width: 200px;">
-          <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${location.name}</h3>
+          <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${beach.name}</h3>
           <p style="margin: 4px 0; color: ${color}; font-weight: 500;">Status: ${statusText}</p>
-          <p style="margin: 4px 0; font-size: 14px; color: #666;">Last updated: ${formattedTime}</p>
-          <p style="margin: 4px 0; font-size: 13px; color: #888;">Coordinates: ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}</p>
+          <p style="margin: 4px 0; font-size: 14px; color: #666;">Region: ${beach.region}</p>
       `;
 
-      // Add optional fields if available
-      if (location.severity) {
-        popupContent += `<p style="margin: 4px 0; font-size: 14px; color: #666;">Severity: ${location.severity}</p>`;
+      if (beach.timestamp) {
+        const formattedTime = new Date(beach.timestamp).toLocaleDateString("en-FI", {
+          dateStyle: "medium",
+        });
+        popupContent += `<p style="margin: 4px 0; font-size: 14px; color: #666;">Last updated: ${formattedTime}</p>`;
       }
-      if (location.description) {
-        popupContent += `<p style="margin: 6px 0 0 0; font-size: 13px; color: #555; line-height: 1.4;">${location.description}</p>`;
+
+      popupContent += `<p style="margin: 4px 0; font-size: 13px; color: #888;">Coordinates: ${beach.lat.toFixed(4)}, ${beach.lon.toFixed(4)}</p>`;
+
+      if (beach.severity) {
+        popupContent += `<p style="margin: 4px 0; font-size: 14px; color: #666;">Severity: ${beach.severity}</p>`;
+      }
+
+      if (beach.description) {
+        popupContent += `<p style="margin: 6px 0 0 0; font-size: 13px; color: #555; line-height: 1.4;">${beach.description}</p>`;
+      }
+
+      if (beach.status === "unknown") {
+        popupContent += `<p style="margin: 6px 0 0 0; font-size: 13px; color: #888; line-height: 1.4; font-style: italic;">No recent data available. Exercise caution.</p>`;
       }
 
       popupContent += `</div>`;
@@ -145,7 +204,7 @@ const CyanoMap = () => {
 
     // Add company markers
     COMPANIES.forEach((company) => {
-      // Create a custom icon for companies (different from cyano markers)
+      // Create a custom icon for companies (different from beach markers)
       const companyIcon = L.divIcon({
         className: "custom-company-marker",
         html: `<div style="
@@ -200,7 +259,7 @@ const CyanoMap = () => {
 
       marker.bindPopup(popupContent);
     });
-  }, [locations]);
+  }, [beachMarkers]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -226,7 +285,7 @@ const CyanoMap = () => {
               </div>
             </div>
             <Button
-              onClick={fetchCyanoData}
+              onClick={fetchLocalData}
               disabled={loading}
               className="gap-2"
             >
@@ -262,11 +321,15 @@ const CyanoMap = () => {
                 <span className="text-sm">Clear</span>
               </div>
               <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded-full bg-gray-400 border-2 border-white"></div>
+                <span className="text-sm">No Data</span>
+              </div>
+              <div className="flex items-center gap-2">
                 <div className="flex items-center justify-center w-4 h-4 rounded-full bg-primary border-2 border-white text-[10px]">🏢</div>
                 <span className="text-sm">Companies</span>
               </div>
               <div className="ml-auto text-sm text-muted-foreground">
-                Total locations: {locations.length}
+                Total beaches: {beachMarkers.length}
               </div>
             </div>
           </Card>
@@ -281,7 +344,7 @@ const CyanoMap = () => {
 
           <Card className="p-4">
             <p className="text-sm text-muted-foreground">
-              Click any colored area on the map to view details about cyanobacteria presence at that location. Data updates automatically every 60 seconds.
+              Click any marker on the map to view details. All data is loaded from local files in public/data directory. Data refreshes automatically every 60 seconds.
             </p>
           </Card>
         </div>
