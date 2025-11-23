@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { RefreshCw, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { COMPANIES } from "@/data/companies";
 
 interface CyanoLocation {
   id: string;
@@ -85,7 +86,7 @@ const CyanoMap = () => {
 
     // Clear existing markers
     mapRef.current.eachLayer((layer) => {
-      if (layer instanceof L.CircleMarker) {
+      if (layer instanceof L.CircleMarker || layer instanceof L.Marker) {
         mapRef.current?.removeLayer(layer);
       }
     });
@@ -138,6 +139,64 @@ const CyanoMap = () => {
       }
 
       popupContent += `</div>`;
+
+      marker.bindPopup(popupContent);
+    });
+
+    // Add company markers
+    COMPANIES.forEach((company) => {
+      // Create a custom icon for companies (different from cyano markers)
+      const companyIcon = L.divIcon({
+        className: "custom-company-marker",
+        html: `<div style="
+          background-color: hsl(var(--primary));
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          border: 3px solid white;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+        ">🏢</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+      });
+
+      const marker = L.marker([company.latitude, company.longitude], {
+        icon: companyIcon,
+      }).addTo(mapRef.current!);
+
+      const categoryColors: Record<string, string> = {
+        cleanup: "#3b82f6",
+        biorefinery: "#8b5cf6",
+        biotech: "#10b981",
+        monitoring: "#f59e0b",
+        project: "#ec4899",
+      };
+
+      const categoryColor = categoryColors[company.category] || "#6b7280";
+
+      const popupContent = `
+        <div style="font-family: system-ui, -apple-system, sans-serif; min-width: 220px;">
+          <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${company.name}</h3>
+          <p style="margin: 4px 0; font-size: 13px; color: #666;">
+            <span style="display: inline-block; padding: 2px 8px; background-color: ${categoryColor}; color: white; border-radius: 12px; font-size: 11px; font-weight: 500;">
+              ${company.category}
+            </span>
+          </p>
+          <p style="margin: 4px 0; font-size: 14px; color: #666;">📍 ${company.city}</p>
+          <p style="margin: 8px 0 0 0; font-size: 13px; color: #555; line-height: 1.4;">${company.description}</p>
+          ${company.website ? `
+            <p style="margin: 8px 0 0 0;">
+              <a href="${company.website}" target="_blank" rel="noopener noreferrer" style="color: ${categoryColor}; text-decoration: none; font-size: 13px; font-weight: 500;">
+                Visit website →
+              </a>
+            </p>
+          ` : ''}
+        </div>
+      `;
 
       marker.bindPopup(popupContent);
     });
@@ -201,6 +260,10 @@ const CyanoMap = () => {
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-green-500 border-2 border-white"></div>
                 <span className="text-sm">Clear</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-4 h-4 rounded-full bg-primary border-2 border-white text-[10px]">🏢</div>
+                <span className="text-sm">Companies</span>
               </div>
               <div className="ml-auto text-sm text-muted-foreground">
                 Total locations: {locations.length}
