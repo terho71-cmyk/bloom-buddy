@@ -8,7 +8,9 @@ import { BloomSummary, BulletinResponse } from "@/types/bloom";
 import { useToast } from "@/hooks/use-toast";
 import { Waves, Building2, Radar, Users } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { CompanyAlertsSection } from "@/components/CompanyAlertsSection";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 const Index = () => {
   const [regions, setRegions] = useState<string[]>([]);
@@ -193,8 +195,31 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Company Alerts Section */}
-      <CompanyAlertsSection />
+      {/* Company Alerts CTA Section */}
+      <section className="container mx-auto px-4 py-12">
+        <Card className="border-2 border-accent/20 bg-gradient-to-br from-accent/5 to-primary/5">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-heading flex items-center justify-center gap-2">
+              <Building2 className="h-6 w-6 text-accent" />
+              Are you a startup or company working with algae?
+            </CardTitle>
+            <CardDescription className="text-base mt-2">
+              Get notified when there are cyanobacteria blooms or algae to be harvested in your preferred region.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-4 pb-8">
+            <p className="text-sm text-muted-foreground max-w-2xl text-center">
+              Companies working with algae cleanup, microalgae cultivation, or algae-based products can sign up to receive alerts about algae availability in specific areas around the Baltic Sea.
+            </p>
+            <NavLink to="/startups">
+              <Button size="lg" className="gap-2">
+                Go to startup signup
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </NavLink>
+          </CardContent>
+        </Card>
+      </section>
 
       {/* Footer */}
       <footer className="border-t mt-16 py-6 bg-card">
