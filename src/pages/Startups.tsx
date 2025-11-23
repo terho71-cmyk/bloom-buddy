@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
-import { Actor, EnvironmentType, SolutionGap } from "@/types/bloom";
+import { Actor, EnvironmentType } from "@/types/bloom";
 import { BloomApi } from "@/services/bloomApi";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Search, Building2, AlertTriangle } from "lucide-react";
+import { Search, Building2 } from "lucide-react";
 import { StartupProfileDialog } from "@/components/StartupProfileDialog";
 import { NavLink } from "@/components/NavLink";
-import { GapCard } from "@/components/GapCard";
-import { Link } from "react-router-dom";
 import { CompanyAlertsSection } from "@/components/CompanyAlertsSection";
 
 export default function Startups() {
@@ -20,7 +18,6 @@ export default function Startups() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedStartup, setSelectedStartup] = useState<Actor | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [topGaps, setTopGaps] = useState<SolutionGap[]>([]);
 
   const allEnvironments: EnvironmentType[] = ["coastal", "lakes", "rivers", "ports", "farms", "urban"];
   const [allTags, setAllTags] = useState<string[]>([]);
@@ -43,15 +40,6 @@ export default function Startups() {
     const tags = new Set<string>();
     startupActors.forEach(s => s.tags.forEach(t => tags.add(t)));
     setAllTags(Array.from(tags).sort());
-    
-    // Load top gaps for default region/week
-    try {
-      const summary = await BloomApi.getBloomSummary("Turku archipelago", 28);
-      const gaps = await BloomApi.analyzeGaps(summary);
-      setTopGaps(gaps.slice(0, 3));
-    } catch (error) {
-      console.warn("Could not load gaps:", error);
-    }
   };
 
   const applyFilters = () => {
@@ -209,11 +197,8 @@ export default function Startups() {
           )}
         </div>
 
-        {/* Startup cards and sidebar grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Content - Startup Cards */}
-          <div className="lg:col-span-3">
-            <div className="grid gap-6 md:grid-cols-2">
+         {/* Startup cards */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filteredStartups.map(startup => (
                 <Card key={startup.id} className="p-6 hover:shadow-lg transition-shadow flex flex-col">
                   <div className="flex items-start justify-between mb-4">
@@ -257,44 +242,15 @@ export default function Startups() {
                   </Button>
                 </Card>
               ))}
-            </div>
-
-            {filteredStartups.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-lg text-muted-foreground">
-                  No startups match your filters. Try adjusting your search criteria.
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar - Solution Gaps */}
-          <div className="lg:col-span-1">
-            {topGaps.length > 0 && (
-              <Card className="sticky top-24">
-                <div className="p-6 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-orange-500" />
-                    <h3 className="font-semibold">Current Gaps</h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Under-served themes in Turku archipelago, Week 28
-                  </p>
-                  <div className="space-y-3">
-                    {topGaps.map((gap, idx) => (
-                      <GapCard key={idx} gap={gap} compact />
-                    ))}
-                  </div>
-                  <Link to="/solution-gaps">
-                    <Button variant="outline" className="w-full">
-                      View All Gaps
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
-            )}
-          </div>
         </div>
+
+        {filteredStartups.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-lg text-muted-foreground">
+              No startups match your filters. Try adjusting your search criteria.
+            </p>
+          </div>
+        )}
       </main>
 
       <StartupProfileDialog
