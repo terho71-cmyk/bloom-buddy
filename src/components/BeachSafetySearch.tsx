@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Clock, Info, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
+import { Search, MapPin, Clock, Info, CheckCircle, AlertTriangle, XCircle, HelpCircle } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -31,7 +31,7 @@ interface BeachLocation {
 interface SafetyResult {
   location: string;
   region: string;
-  status: "safe" | "caution" | "unsafe";
+  status: "safe" | "caution" | "unsafe" | "unknown";
   severity: string;
   lastUpdated: string;
   description: string;
@@ -53,24 +53,16 @@ export function BeachSafetySearch() {
 
   const loadBeaches = async () => {
     try {
-      await BloomApi.loadData();
-      const observations = await BloomApi.getAllObservations();
+      // Load all Finnish beaches from the comprehensive list
+      const response = await fetch('/data/finnish_beaches.json');
+      const allBeaches = await response.json();
       
-      // Get unique beaches
-      const uniqueBeaches = new Map<string, BeachLocation>();
-      observations.forEach(obs => {
-        const key = `${obs.areaName}-${obs.region}`;
-        if (!uniqueBeaches.has(key)) {
-          uniqueBeaches.set(key, {
-            areaName: obs.areaName,
-            region: obs.region,
-            lat: obs.lat,
-            lon: obs.lon
-          });
-        }
-      });
-      
-      setBeaches(Array.from(uniqueBeaches.values()));
+      setBeaches(allBeaches.map((beach: any) => ({
+        areaName: beach.name,
+        region: beach.region,
+        lat: beach.lat,
+        lon: beach.lon
+      })));
     } catch (err) {
       console.error("Failed to load beaches:", err);
     }
@@ -84,23 +76,25 @@ export function BeachSafetySearch() {
     setResult(null);
 
     try {
+      await BloomApi.loadData();
       const observations = await BloomApi.getAllObservations();
       
-      // Find matching observations
-      const matches = observations.filter(obs => 
-        obs.areaName.toLowerCase() === beachName.toLowerCase() &&
-        (!region || obs.region.toLowerCase() === region.toLowerCase())
+      // Find the beach in the complete list
+      const beach = beaches.find(b => 
+        b.areaName.toLowerCase() === beachName.toLowerCase() &&
+        (!region || b.region.toLowerCase() === region.toLowerCase())
       );
 
-      if (matches.length === 0) {
+      if (!beach) {
         setError(`Beach "${beachName}" not found in our database.`);
         setLoading(false);
         return;
       }
 
-      // Get the most recent observation
-      const latest = matches.reduce((prev, current) => 
-        new Date(current.date) > new Date(prev.date) ? current : prev
+      // Find matching observations
+      const matches = observations.filter(obs => 
+        obs.areaName.toLowerCase() === beachName.toLowerCase() &&
+        obs.region.toLowerCase() === beach.region.toLowerCase()
       );
 
       // Map severity to safety status
@@ -121,20 +115,39 @@ export function BeachSafetySearch() {
           case "high":
             return "High concentration of cyanobacteria. Swimming not recommended.";
           default:
-            return "Status unknown.";
+            return "Data not available for this beach. Exercise caution when swimming.";
         }
       };
 
-      setResult({
-        location: latest.areaName,
-        region: latest.region,
-        status: getSafetyStatus(latest.severity),
-        severity: latest.severity,
-        lastUpdated: latest.date,
-        description: getDescription(latest.severity),
-        lat: latest.lat,
-        lon: latest.lon
-      });
+      if (matches.length === 0) {
+        // No data available for this beach
+        setResult({
+          location: beach.areaName,
+          region: beach.region,
+          status: "unknown",
+          severity: "unknown",
+          lastUpdated: "N/A",
+          description: getDescription("unknown"),
+          lat: beach.lat,
+          lon: beach.lon
+        });
+      } else {
+        // Get the most recent observation
+        const latest = matches.reduce((prev, current) => 
+          new Date(current.date) > new Date(prev.date) ? current : prev
+        );
+
+        setResult({
+          location: latest.areaName,
+          region: latest.region,
+          status: getSafetyStatus(latest.severity),
+          severity: latest.severity,
+          lastUpdated: latest.date,
+          description: getDescription(latest.severity),
+          lat: latest.lat,
+          lon: latest.lon
+        });
+      }
     } catch (err) {
       setError("Failed to fetch beach status. Please try again.");
       console.error(err);
@@ -151,7 +164,7 @@ export function BeachSafetySearch() {
     );
   }, [beaches, searchValue]);
 
-  const getStatusIcon = (status: "safe" | "caution" | "unsafe") => {
+  const getStatusIcon = (status: "safe" | "caution" | "unsafe" | "unknown") => {
     switch (status) {
       case "safe":
         return <CheckCircle className="h-8 w-8 text-green-500" />;
@@ -159,10 +172,12 @@ export function BeachSafetySearch() {
         return <AlertTriangle className="h-8 w-8 text-yellow-500" />;
       case "unsafe":
         return <XCircle className="h-8 w-8 text-red-500" />;
+      case "unknown":
+        return <HelpCircle className="h-8 w-8 text-muted-foreground" />;
     }
   };
 
-  const getStatusColor = (status: "safe" | "caution" | "unsafe") => {
+  const getStatusColor = (status: "safe" | "caution" | "unsafe" | "unknown") => {
     switch (status) {
       case "safe":
         return "bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800";
@@ -170,10 +185,12 @@ export function BeachSafetySearch() {
         return "bg-yellow-50 border-yellow-200 dark:bg-yellow-950 dark:border-yellow-800";
       case "unsafe":
         return "bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800";
+      case "unknown":
+        return "bg-muted/20 border-muted";
     }
   };
 
-  const getStatusMessage = (status: "safe" | "caution" | "unsafe") => {
+  const getStatusMessage = (status: "safe" | "caution" | "unsafe" | "unknown") => {
     switch (status) {
       case "safe":
         return "Safe to swim";
@@ -181,6 +198,8 @@ export function BeachSafetySearch() {
         return "Caution: suspected bloom";
       case "unsafe":
         return "Unsafe: bloom detected";
+      case "unknown":
+        return "Data not available";
     }
   };
 
@@ -276,19 +295,23 @@ export function BeachSafetySearch() {
                   <h3 className="text-2xl font-heading font-bold">
                     {getStatusMessage(result.status)}
                   </h3>
-                  <Badge variant={result.status === "safe" ? "default" : "secondary"}>
-                    {result.severity} severity
-                  </Badge>
+                  {result.status !== "unknown" && (
+                    <Badge variant={result.status === "safe" ? "default" : "secondary"}>
+                      {result.severity} severity
+                    </Badge>
+                  )}
                 </div>
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <MapPin className="h-4 w-4" />
                     {result.location}, {result.region}
                   </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    Updated: {new Date(result.lastUpdated).toLocaleDateString()}
-                  </span>
+                  {result.lastUpdated !== "N/A" && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      Updated: {new Date(result.lastUpdated).toLocaleDateString()}
+                    </span>
+                  )}
                 </div>
               </div>
               <p className="text-foreground/80">
