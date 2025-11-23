@@ -84,11 +84,10 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const regionKey = url.searchParams.get('region');
-    const weekStr = url.searchParams.get('week');
+    // Read parameters from request body
+    const { region: regionKey, week: weekNum } = await req.json();
 
-    if (!regionKey || !weekStr) {
+    if (!regionKey || !weekNum) {
       return new Response(
         JSON.stringify({ error: 'Missing region or week parameter' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -103,7 +102,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const week = parseInt(weekStr, 10);
+    const week = typeof weekNum === 'number' ? weekNum : parseInt(String(weekNum), 10);
     const year = new Date().getUTCFullYear();
     const { startDate, endDate } = getWeekDateRange(year, week);
 
