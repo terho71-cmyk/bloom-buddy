@@ -10,6 +10,7 @@ import { StartupProfileDialog } from "@/components/StartupProfileDialog";
 import { NavLink } from "@/components/NavLink";
 import { GapCard } from "@/components/GapCard";
 import { Link } from "react-router-dom";
+import { CompanyAlertsSection } from "@/components/CompanyAlertsSection";
 
 export default function Startups() {
   const [startups, setStartups] = useState<Actor[]>([]);
@@ -118,9 +119,24 @@ export default function Startups() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-heading font-bold mb-3">Startup Solution Marketplace</h1>
+          <h1 className="text-4xl font-heading font-bold mb-3">Startups & Companies</h1>
           <p className="text-lg text-muted-foreground">
-            Explore blue-economy startups whose solutions address cyanobacteria and water quality challenges.
+            Sign up to be notified when there is algae to be picked up in your region, or explore blue-economy startups addressing cyanobacteria challenges.
+          </p>
+        </div>
+
+        {/* Company Alerts Signup Section */}
+        <div className="mb-12">
+          <CompanyAlertsSection />
+        </div>
+
+        {/* Divider */}
+        <div className="border-t my-12"></div>
+
+        <div className="mb-8">
+          <h2 className="text-3xl font-heading font-bold mb-3">Startup Solution Marketplace</h2>
+          <p className="text-muted-foreground">
+            Browse startups whose solutions address cyanobacteria and water quality challenges.
           </p>
         </div>
 
