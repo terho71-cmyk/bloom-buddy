@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Building2 } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
+import { BeachSafetySearch } from "@/components/BeachSafetySearch";
 
 const Index = () => {
   const [regions, setRegions] = useState<string[]>([]);
@@ -95,6 +96,16 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-soft">
       <AppHeader />
+
+      {/* Beach Safety Search - Prominent Feature */}
+      <section className="container mx-auto px-4 py-12">
+        <BeachSafetySearch />
+      </section>
+
+      {/* Divider */}
+      <div className="container mx-auto px-4">
+        <div className="border-t"></div>
+      </div>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
