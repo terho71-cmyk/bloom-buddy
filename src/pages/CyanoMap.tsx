@@ -50,7 +50,7 @@ const CyanoMap = () => {
       center: [60.0, 22.0],
       zoom: 5.5,
       minZoom: 4,
-      maxZoom: 10,
+      maxZoom: 19,
       maxBounds: maxBounds,
       maxBoundsViscosity: 1.0, // Makes bounds more restrictive
     });
