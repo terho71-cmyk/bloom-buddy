@@ -40,8 +40,8 @@ const CyanoMap = () => {
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    // Initialize map centered on Finland
-    mapRef.current = L.map(mapContainerRef.current).setView([64.5, 26.0], 6);
+    // Initialize map centered on Nordic countries and Baltic Sea
+    mapRef.current = L.map(mapContainerRef.current).setView([60.0, 18.0], 5);
 
     // Add OpenStreetMap tiles
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -129,7 +129,7 @@ const CyanoMap = () => {
                   Cyanobacteria Map
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Real-time monitoring across Finland
+                  Real-time monitoring across Nordic countries and Baltic Sea
                 </p>
               </div>
             </div>
