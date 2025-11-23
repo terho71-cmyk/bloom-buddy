@@ -6,7 +6,7 @@ import { BulletinCard } from "@/components/BulletinCard";
 import { BloomApi } from "@/services/bloomApi";
 import { BloomSummary, BulletinResponse } from "@/types/bloom";
 import { useToast } from "@/hooks/use-toast";
-import { Waves, Building2, Radar, Users } from "lucide-react";
+import { Waves, Building2 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -127,20 +127,6 @@ const Index = () => {
               >
                 <Building2 className="h-5 w-5" />
                 <span>Investors</span>
-              </NavLink>
-              <NavLink 
-                to="/solution-gaps" 
-                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
-              >
-                <Radar className="h-5 w-5" />
-                <span>Gaps</span>
-              </NavLink>
-              <NavLink 
-                to="/clusters" 
-                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
-              >
-                <Users className="h-5 w-5" />
-                <span>Clusters</span>
               </NavLink>
             </div>
           </div>
