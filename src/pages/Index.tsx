@@ -8,6 +8,7 @@ import { BloomSummary, BulletinResponse } from "@/types/bloom";
 import { useToast } from "@/hooks/use-toast";
 import { Waves, Building2, Radar, Users } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import { CompanyAlertsSection } from "@/components/CompanyAlertsSection";
 
 const Index = () => {
   const [regions, setRegions] = useState<string[]>([]);
@@ -191,6 +192,9 @@ const Index = () => {
           </div>
         </div>
       </main>
+
+      {/* Company Alerts Section */}
+      <CompanyAlertsSection />
 
       {/* Footer */}
       <footer className="border-t mt-16 py-6 bg-card">
