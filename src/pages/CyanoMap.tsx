@@ -41,7 +41,19 @@ const CyanoMap = () => {
     if (!mapContainerRef.current) return;
 
     // Initialize map centered on Nordic countries and Baltic Sea
-    mapRef.current = L.map(mapContainerRef.current).setView([60.0, 18.0], 5);
+    const maxBounds: L.LatLngBoundsExpression = [
+      [52.0, -5.0],  // South-West corner
+      [72.0, 35.0],  // North-East corner
+    ];
+
+    mapRef.current = L.map(mapContainerRef.current, {
+      center: [60.0, 22.0],
+      zoom: 5.5,
+      minZoom: 4,
+      maxZoom: 10,
+      maxBounds: maxBounds,
+      maxBoundsViscosity: 1.0, // Makes bounds more restrictive
+    });
 
     // Add OpenStreetMap tiles
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -51,8 +63,14 @@ const CyanoMap = () => {
     // Fetch initial data
     fetchCyanoData();
 
+    // Set up auto-refresh every 12 hours (43200000 ms)
+    const refreshInterval = setInterval(() => {
+      fetchCyanoData();
+    }, 43200000);
+
     // Cleanup
     return () => {
+      clearInterval(refreshInterval);
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
@@ -126,10 +144,10 @@ const CyanoMap = () => {
               </Button>
               <div>
                 <h1 className="text-3xl font-bold text-foreground">
-                  Cyanobacteria Map
+                  Baltic Sea Cyanobacteria Monitoring (Nordic Region)
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Real-time monitoring across Nordic countries and Baltic Sea
+                  Real-time monitoring of algae blooms across the Baltic Sea
                 </p>
               </div>
             </div>
@@ -181,6 +199,12 @@ const CyanoMap = () => {
               className="w-full h-[600px]"
               style={{ background: "hsl(var(--muted))" }}
             />
+          </Card>
+
+          <Card className="p-4">
+            <p className="text-sm text-muted-foreground">
+              The map shows current cyanobacteria bloom conditions in the Baltic Sea and Nordic region, updated automatically every 12 hours.
+            </p>
           </Card>
         </div>
       </main>
