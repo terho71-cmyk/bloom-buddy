@@ -184,7 +184,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t mt-16 py-6 bg-card">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>BluePulse Baltic AI • Powered by Apelago • Mock data for demonstration</p>
+          <p>BloomAlert • Powered by Apelago • Mock data for demonstration</p>
         </div>
       </footer>
       

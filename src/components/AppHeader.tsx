@@ -9,10 +9,10 @@ export function AppHeader() {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <Waves className="h-8 w-8" />
-              <h1 className="text-4xl font-heading font-bold">BluePulse Baltic AI</h1>
+              <h1 className="text-4xl font-heading font-bold">BloomAlert</h1>
             </div>
             <p className="text-lg opacity-90">
-              Cyanobacteria situation & blue-economy solution finder for Apelago
+              Cyanobacteria alerts for beaches and blue-economy startups
             </p>
           </div>
           <div className="flex gap-2">
