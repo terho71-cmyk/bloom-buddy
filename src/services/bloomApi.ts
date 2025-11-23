@@ -1,4 +1,4 @@
-import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet, ProblemFitScore, StartupAlertRule, PerfectWeekOverview, CaseStudyInput, StartupCaseStudy, SolutionGap, CollaborationCluster, Severity } from "@/types/bloom";
+import { BloomObservation, BloomSummary, Actor, BulletinResponse, Recommendation, PilotOpportunity, PitchSnippet, ProblemFitScore, StartupAlertRule, PerfectWeekOverview, CaseStudyInput, StartupCaseStudy, SolutionGap, CollaborationCluster } from "@/types/bloom";
 import { buildPitchSnippet } from "@/lib/pitch";
 import { computeProblemFitScore } from "@/lib/fitScore";
 import { buildInvestorViewSummary } from "@/lib/investorView";
@@ -7,158 +7,17 @@ import { buildCaseStudyFromInput } from "@/lib/caseStudies";
 import { buildGapRadar } from "@/lib/gapRadar";
 import { buildClustersForSituation } from "@/lib/clusters";
 
-// API layer with real SYKE CitObs integration
+// Mock API layer - can be replaced with real API calls later
 export class BloomApi {
   private static observations: BloomObservation[] = [];
   private static actors: Actor[] = [];
   private static startupAlerts: Record<string, StartupAlertRule[]> = {};
   private static caseStudies: StartupCaseStudy[] = [];
-  private static readonly SYKE_API_URL = 'https://rajapinnat.ymparisto.fi/api/kansalaishavainnot/1.0/requests.json';
-  private static readonly SERVICE_CODE = 'algaebloom_service_code_201808151546171';
-
-  // Transform SYKE API response to our BloomObservation format
-  private static transformSykeObservation(sykeObs: any): BloomObservation | null {
-    try {
-      // Extract coordinates from lat/long fields
-      const lat = parseFloat(sykeObs.lat);
-      const lon = parseFloat(sykeObs.long);
-      
-      if (isNaN(lat) || isNaN(lon)) return null;
-
-      // Parse date and calculate week number
-      const date = new Date(sykeObs.requested_datetime || sykeObs.updated_datetime);
-      const week = this.getWeekNumber(date);
-      
-      // Determine region based on coordinates (rough approximation for Baltic regions)
-      const region = this.determineRegion(lat, lon);
-      
-      // Map severity from SYKE data (if available in extended attributes)
-      const severity = this.mapSeverity(sykeObs);
-      
-      // Use address or location name as area name
-      const areaName = sykeObs.address || sykeObs.service_name || `Location ${lat.toFixed(2)},${lon.toFixed(2)}`;
-
-      return {
-        id: sykeObs.service_request_id || `obs_${Date.now()}_${Math.random()}`,
-        region,
-        areaName,
-        lat,
-        lon,
-        date: date.toISOString().split('T')[0],
-        week,
-        severity
-      };
-    } catch (error) {
-      console.warn('Failed to transform observation:', error);
-      return null;
-    }
-  }
-
-  // Determine region based on coordinates (simplified for Baltic Sea regions)
-  private static determineRegion(lat: number, lon: number): string {
-    // Turku archipelago region (Southwest Finland)
-    if (lat >= 59.8 && lat <= 60.7 && lon >= 21.0 && lon <= 22.5) {
-      return "Turku archipelago";
-    }
-    // Helsinki archipelago region
-    if (lat >= 59.9 && lat <= 60.4 && lon >= 24.5 && lon <= 25.5) {
-      return "Helsinki archipelago";
-    }
-    // Vaasa region (Ostrobothnia)
-    if (lat >= 62.8 && lat <= 63.5 && lon >= 21.0 && lon <= 22.0) {
-      return "Vaasa archipelago";
-    }
-    // Stockholm archipelago
-    if (lat >= 59.0 && lat <= 60.0 && lon >= 18.0 && lon <= 19.5) {
-      return "Stockholm archipelago";
-    }
-    // Default to Baltic Sea
-    return "Baltic Sea";
-  }
-
-  // Map SYKE severity to our format
-  private static mapSeverity(sykeObs: any): Severity {
-    // Check for severity in extended attributes
-    const desc = (sykeObs.description || '').toLowerCase();
-    const status = (sykeObs.status || '').toLowerCase();
-    
-    // Look for keywords indicating severity
-    if (desc.includes('runsas') || desc.includes('voimakas') || desc.includes('heavy') || desc.includes('abundant')) {
-      return 'high';
-    }
-    if (desc.includes('kohtalainen') || desc.includes('moderate')) {
-      return 'medium';
-    }
-    if (desc.includes('vähäinen') || desc.includes('light') || desc.includes('slight')) {
-      return 'low';
-    }
-    
-    // Default to low if observation exists
-    return 'low';
-  }
-
-  // Calculate ISO week number
-  private static getWeekNumber(date: Date): number {
-    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-  }
-
-  // Fetch real observations from SYKE API
-  private static async fetchSykeObservations(startDate: string, endDate: string): Promise<BloomObservation[]> {
-    try {
-      const params = new URLSearchParams({
-        service_code: this.SERVICE_CODE,
-        start_date: startDate,
-        end_date: endDate,
-        extensions: 'true'
-      });
-
-      const response = await fetch(`${this.SYKE_API_URL}?${params.toString()}`);
-      
-      if (!response.ok) {
-        throw new Error(`SYKE API responded with ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      // Transform all observations
-      const observations: BloomObservation[] = [];
-      for (const sykeObs of data) {
-        const transformed = this.transformSykeObservation(sykeObs);
-        if (transformed) {
-          observations.push(transformed);
-        }
-      }
-
-      return observations;
-    } catch (error) {
-      console.error('Failed to fetch from SYKE API:', error);
-      throw error;
-    }
-  }
 
   static async loadData() {
-    try {
-      // Try to load real data from SYKE API (last 6 months)
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 6);
-
-      const startDateStr = startDate.toISOString().split('T')[0];
-      const endDateStr = endDate.toISOString().split('T')[0];
-
-      console.log('Fetching cyanobacteria observations from SYKE API...');
-      this.observations = await this.fetchSykeObservations(startDateStr, endDateStr);
-      console.log(`Loaded ${this.observations.length} observations from SYKE API`);
-    } catch (error) {
-      console.warn('Failed to load from SYKE API, falling back to mock data:', error);
-      // Fallback to mock data if API fails
-      const obsResponse = await fetch('/data/bloom_observations.json');
-      this.observations = await obsResponse.json();
-    }
+    // Load observations
+    const obsResponse = await fetch('/data/bloom_observations.json');
+    this.observations = await obsResponse.json();
 
     // Load actors
     const actorsResponse = await fetch('/data/actors.json');
