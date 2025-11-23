@@ -7,8 +7,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Search, Building2 } from "lucide-react";
 import { StartupProfileDialog } from "@/components/StartupProfileDialog";
-import { NavLink } from "@/components/NavLink";
 import { CompanyAlertsSection } from "@/components/CompanyAlertsSection";
+import { AppHeader } from "@/components/AppHeader";
 
 export default function Startups() {
   const [startups, setStartups] = useState<Actor[]>([]);
@@ -91,19 +91,8 @@ export default function Startups() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-ocean-light to-background">
-      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <NavLink to="/" className="text-2xl font-heading font-bold text-primary hover:text-primary/80">
-              BlueBloom
-            </NavLink>
-            <NavLink to="/" className="text-sm text-muted-foreground hover:text-foreground">
-              ← Back to Dashboard
-            </NavLink>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-soft">
+      <AppHeader />
 
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
