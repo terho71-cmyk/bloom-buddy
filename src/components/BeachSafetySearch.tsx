@@ -1,12 +1,11 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { BloomApi } from "@/services/bloomApi";
 import { BloomObservation } from "@/types/bloom";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Clock, Info, CheckCircle, AlertTriangle, XCircle, HelpCircle, RefreshCw } from "lucide-react";
-import { BeachMap } from "./BeachMap";
+import { Search, MapPin, Clock, Info, CheckCircle, AlertTriangle, XCircle, HelpCircle } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -47,26 +46,10 @@ export function BeachSafetySearch() {
   const [result, setResult] = useState<SafetyResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
-  const [autoRefresh, setAutoRefresh] = useState(true);
 
   useEffect(() => {
     loadBeaches();
   }, []);
-
-  // Auto-refresh every 60 minutes
-  useEffect(() => {
-    if (!autoRefresh || !result) return;
-
-    const interval = setInterval(() => {
-      if (result) {
-        searchBeach(result.location, result.region);
-        setLastUpdated(new Date());
-      }
-    }, 60 * 60 * 1000); // 60 minutes
-
-    return () => clearInterval(interval);
-  }, [result, autoRefresh]);
 
   const loadBeaches = async () => {
     try {
@@ -85,7 +68,7 @@ export function BeachSafetySearch() {
     }
   };
 
-  const searchBeach = useCallback(async (beachName: string, region?: string) => {
+  const searchBeach = async (beachName: string, region?: string) => {
     if (!beachName) return;
 
     setLoading(true);
@@ -170,9 +153,8 @@ export function BeachSafetySearch() {
       console.error(err);
     } finally {
       setLoading(false);
-      setLastUpdated(new Date());
     }
-  }, [beaches]);
+  };
 
   const filteredBeaches = useMemo(() => {
     if (!searchValue) return beaches;
@@ -231,17 +213,13 @@ export function BeachSafetySearch() {
               <Info className="h-5 w-5 text-muted-foreground cursor-help" />
             </TooltipTrigger>
             <TooltipContent className="max-w-xs">
-              <p>Data updates automatically every 60 minutes from satellite observations, monitoring systems, and citizen reports across Finnish beaches.</p>
+              <p>Data updates automatically based on satellite observations and monitoring systems across the Baltic Sea region.</p>
             </TooltipContent>
           </Tooltip>
         </div>
         <p className="text-muted-foreground">
-          Check real-time water quality and cyanobacteria status for {beaches.length}+ Finnish beaches
+          Check real-time water quality and cyanobacteria status for Nordic & Baltic beaches
         </p>
-        <div className="flex items-center justify-center gap-2 mt-2 text-sm text-muted-foreground">
-          <RefreshCw className="h-4 w-4" />
-          <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
-        </div>
       </div>
 
       <Card className="p-6 shadow-lg">
@@ -306,70 +284,42 @@ export function BeachSafetySearch() {
 
       {/* Result Display */}
       {result && (
-        <div className="space-y-4">
-          <Card className={`p-6 shadow-lg border-2 ${getStatusColor(result.status)}`}>
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                {getStatusIcon(result.status)}
-              </div>
-              <div className="flex-1 space-y-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-2xl font-heading font-bold">
-                      {getStatusMessage(result.status)}
-                    </h3>
-                    {result.status !== "unknown" && (
-                      <Badge variant={result.status === "safe" ? "default" : "secondary"}>
-                        {result.severity} severity
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {result.location}, {result.region}
-                    </span>
-                    {result.lastUpdated !== "N/A" && (
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        Updated: {new Date(result.lastUpdated).toLocaleDateString()}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <p className="text-foreground/80">
-                  {result.description}
-                </p>
-                <div className="flex items-center gap-2 pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      searchBeach(result.location, result.region);
-                    }}
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Refresh Status
-                  </Button>
-                </div>
-              </div>
+        <Card className={`p-6 shadow-lg border-2 ${getStatusColor(result.status)}`}>
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0">
+              {getStatusIcon(result.status)}
             </div>
-          </Card>
-          
-          {/* Map Display */}
-          <Card className="p-4 shadow-lg">
-            <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              Beach Location
-            </h4>
-            <BeachMap
-              lat={result.lat}
-              lon={result.lon}
-              beachName={result.location}
-              status={result.status}
-            />
-          </Card>
-        </div>
+            <div className="flex-1 space-y-3">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-2xl font-heading font-bold">
+                    {getStatusMessage(result.status)}
+                  </h3>
+                  {result.status !== "unknown" && (
+                    <Badge variant={result.status === "safe" ? "default" : "secondary"}>
+                      {result.severity} severity
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    {result.location}, {result.region}
+                  </span>
+                  {result.lastUpdated !== "N/A" && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      Updated: {new Date(result.lastUpdated).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <p className="text-foreground/80">
+                {result.description}
+              </p>
+            </div>
+          </div>
+        </Card>
       )}
 
       {/* Error Display */}

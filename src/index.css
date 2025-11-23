@@ -110,24 +110,3 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
-
-/* Leaflet map styles fix */
-.leaflet-container {
-  font-family: inherit;
-}
-
-.leaflet-popup-content-wrapper {
-  @apply rounded-lg shadow-lg;
-}
-
-.leaflet-popup-content {
-  margin: 12px;
-  font-size: 14px;
-}
-
-/* Custom marker styles */
-.custom-marker {
-  background: transparent;
-  border: none;
-}
-
