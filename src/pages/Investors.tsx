@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TrendingUp, Building2, MapPin, Target } from "lucide-react";
 import { InvestorDashboard } from "@/components/InvestorDashboard";
-import { NavLink } from "@/components/NavLink";
 import { useToast } from "@/hooks/use-toast";
+import { AppHeader } from "@/components/AppHeader";
 
 export default function Investors() {
   const { toast } = useToast();
@@ -48,7 +48,8 @@ export default function Investors() {
 
   if (showDashboard && selectedInvestor && region && week !== null) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-soft">
+        <AppHeader />
         <div className="container mx-auto py-8 px-4">
           <Button 
             onClick={() => setShowDashboard(false)} 
@@ -69,19 +70,8 @@ export default function Investors() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <NavLink to="/" className="text-2xl font-heading font-bold text-primary hover:text-primary/80">
-              BlueBloom
-            </NavLink>
-            <NavLink to="/" className="text-sm text-muted-foreground hover:text-foreground">
-              ← Back to Dashboard
-            </NavLink>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-soft">
+      <AppHeader />
 
       <div className="container mx-auto py-8 px-4 max-w-7xl">
         {/* Header */}
