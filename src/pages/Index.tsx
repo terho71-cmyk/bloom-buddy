@@ -105,6 +105,13 @@ const Index = () => {
             </div>
             <div className="flex gap-2">
               <NavLink 
+                to="/cyano-map" 
+                className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
+              >
+                <Waves className="h-5 w-5" />
+                <span>Map</span>
+              </NavLink>
+              <NavLink 
                 to="/startups" 
                 className="flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-md transition-colors"
               >
