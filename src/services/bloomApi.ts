@@ -6,6 +6,14 @@ import { findPerfectWeeksForStartup } from "@/lib/alerts";
 import { buildCaseStudyFromInput } from "@/lib/caseStudies";
 import { buildGapRadar } from "@/lib/gapRadar";
 import { buildClustersForSituation } from "@/lib/clusters";
+import { supabase } from "@/integrations/supabase/client";
+
+// Map region names to API keys
+const REGION_KEY_MAP: Record<string, string> = {
+  "Turku archipelago": "turku_archipelago",
+  "Helsinki archipelago": "helsinki_archipelago",
+  "Vaasa archipelago": "vaasa_archipelago",
+};
 
 // Mock API layer - can be replaced with real API calls later
 export class BloomApi {
@@ -44,6 +52,67 @@ export class BloomApi {
 
   static async getBloomSummary(region: string, week: number): Promise<BloomSummary> {
     if (this.observations.length === 0) await this.loadData();
+
+    // Try to get real CitObs data first
+    const regionKey = REGION_KEY_MAP[region];
+    if (regionKey) {
+      try {
+        console.log(`Fetching real CitObs data for ${region} (${regionKey}), week ${week}`);
+        
+        const { data, error } = await supabase.functions.invoke('citobs-summary', {
+          body: { region: regionKey, week },
+        });
+
+        if (error) {
+          console.error('Error calling citobs-summary:', error);
+          throw error;
+        }
+
+        if (data && data.summary) {
+          const citobsSummary = data.summary;
+          console.log('Received CitObs summary:', citobsSummary);
+
+          // Get previous week data for trend
+          const prevWeekObs = this.observations.filter(
+            obs => obs.region === region && obs.week === week - 1
+          );
+
+          // Map CitObs events to our hotspot format
+          const hotspots = (citobsSummary.sampleEvents || []).map((event: any) => ({
+            areaName: event.areaName || 'Unknown location',
+            severity: event.severity,
+            observationCount: 1,
+            trend: 'unknown' as const
+          }));
+
+          // Calculate safe areas (areas with 'none' or 'low' severity)
+          const safeAreas = hotspots
+            .filter((h: any) => h.severity === 'none' || h.severity === 'low')
+            .map((h: any) => h.areaName);
+
+          const keyMessages = this.generateKeyMessages(
+            hotspots,
+            safeAreas,
+            citobsSummary.overallRisk
+          );
+
+          return {
+            region,
+            week,
+            totalObservations: citobsSummary.totalObservations,
+            hotspots: hotspots.slice(0, 5),
+            safeAreas,
+            overallRiskLevel: citobsSummary.overallRisk,
+            keyMessages
+          };
+        }
+      } catch (error) {
+        console.error('Failed to fetch real CitObs data, falling back to mock data:', error);
+      }
+    }
+
+    // Fallback to mock data if real API fails or region not supported
+    console.log('Using mock data for', region, 'week', week);
 
     // Filter observations for this region and week
     const currentWeekObs = this.observations.filter(

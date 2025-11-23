@@ -97,9 +97,11 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-soft">
       <AppHeader />
 
-      {/* Beach Safety Search - Prominent Feature */}
       <section className="container mx-auto px-4 py-12">
         <BeachSafetySearch />
+        <p className="text-center text-sm text-muted-foreground mt-4">
+          When you click Generate Analysis below, we fetch real cyanobacteria observations from the official SYKE CitObs API for your selected region and week, filter them by location, and aggregate the data into a comprehensive summary.
+        </p>
       </section>
 
       {/* Divider */}
