@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Search, Building2 } from "lucide-react";
+import { Search, Building2, ExternalLink } from "lucide-react";
 import { StartupProfileDialog } from "@/components/StartupProfileDialog";
 import { CompanyAlertsSection } from "@/components/CompanyAlertsSection";
 import { AppHeader } from "@/components/AppHeader";
+import { COMPANIES } from "@/data/companies";
 
 export default function Startups() {
   const [startups, setStartups] = useState<Actor[]>([]);
@@ -240,6 +241,45 @@ export default function Startups() {
             </p>
           </div>
         )}
+
+        {/* Divider */}
+        <div className="border-t my-12"></div>
+
+        {/* Example Finnish Companies Section */}
+        <section className="mb-12">
+          <h2 className="text-3xl font-heading font-bold mb-3">
+            Example Finnish algae & cyanobacteria companies
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            These companies work with algae cleanup, microalgae cultivation or cyanobacteria-related products.
+            In a full version of BloomAlert, they could receive alerts when blooms appear in their areas.
+          </p>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {COMPANIES.map((company) => (
+              <Card key={company.name} className="p-6 hover:shadow-lg transition-shadow flex flex-col">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-xl font-heading font-semibold">{company.name}</h3>
+                  <Badge variant="secondary" className="text-xs">
+                    {company.category}
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">{company.city}</p>
+                <p className="text-sm mb-4 flex-grow">{company.description}</p>
+                {company.website && (
+                  <a
+                    href={company.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline mt-auto"
+                  >
+                    Visit website
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
+              </Card>
+            ))}
+          </div>
+        </section>
       </main>
 
       <StartupProfileDialog
