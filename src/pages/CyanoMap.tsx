@@ -13,6 +13,8 @@ interface CyanoLocation {
   lon: number;
   status: "detected" | "suspected" | "clear";
   timestamp: string;
+  severity?: string;
+  description?: string;
 }
 
 const CyanoMap = () => {
@@ -63,10 +65,10 @@ const CyanoMap = () => {
     // Fetch initial data
     fetchCyanoData();
 
-    // Set up auto-refresh every 12 hours (43200000 ms)
+    // Set up auto-refresh every 60 seconds
     const refreshInterval = setInterval(() => {
       fetchCyanoData();
-    }, 43200000);
+    }, 60000);
 
     // Cleanup
     return () => {
@@ -118,13 +120,26 @@ const CyanoMap = () => {
           ? "Suspected"
           : "Clear";
 
-      marker.bindPopup(`
-        <div style="font-family: system-ui, -apple-system, sans-serif;">
+      // Build popup content with all available data
+      let popupContent = `
+        <div style="font-family: system-ui, -apple-system, sans-serif; min-width: 200px;">
           <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${location.name}</h3>
           <p style="margin: 4px 0; color: ${color}; font-weight: 500;">Status: ${statusText}</p>
           <p style="margin: 4px 0; font-size: 14px; color: #666;">Last updated: ${formattedTime}</p>
-        </div>
-      `);
+          <p style="margin: 4px 0; font-size: 13px; color: #888;">Coordinates: ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}</p>
+      `;
+
+      // Add optional fields if available
+      if (location.severity) {
+        popupContent += `<p style="margin: 4px 0; font-size: 14px; color: #666;">Severity: ${location.severity}</p>`;
+      }
+      if (location.description) {
+        popupContent += `<p style="margin: 6px 0 0 0; font-size: 13px; color: #555; line-height: 1.4;">${location.description}</p>`;
+      }
+
+      popupContent += `</div>`;
+
+      marker.bindPopup(popupContent);
     });
   }, [locations]);
 
@@ -203,7 +218,7 @@ const CyanoMap = () => {
 
           <Card className="p-4">
             <p className="text-sm text-muted-foreground">
-              The map shows current cyanobacteria bloom conditions in the Baltic Sea and Nordic region, updated automatically every 12 hours.
+              Click any colored area on the map to view details about cyanobacteria presence at that location. Data updates automatically every 60 seconds.
             </p>
           </Card>
         </div>
