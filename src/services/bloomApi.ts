@@ -343,6 +343,10 @@ export class BloomApi {
     return this.actors;
   }
 
+  static getAllObservations(): BloomObservation[] {
+    return this.observations;
+  }
+
   static getStartupAlerts(startupId: string): StartupAlertRule[] {
     return this.startupAlerts[startupId] || [];
   }
